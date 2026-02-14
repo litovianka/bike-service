@@ -81,6 +81,17 @@
       display:block;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
     }
+    .brand-fallback{
+      display:none;
+      color:#fff;
+      font-weight:700;
+      font-size:26px;
+      line-height:1;
+      letter-spacing:.3px;
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+      text-underline-offset:2px;
+    }
 
     .nav{
       display:flex;
@@ -362,7 +373,8 @@
     <div class="topbar-inner">
       <div class="brand">
         <a class="brand-logo" href="{% url 'home_redirect' %}" aria-label="BlackBike">
-          <img src="{% static 'service/blackbike-logo-white.png' %}" alt="blackbike" loading="lazy" decoding="async">
+          <img src="{% static 'service/blackbike-logo-white.png' %}" alt="blackbike" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+          <span class="brand-fallback">blackbike</span>
         </a>
       </div>
 
