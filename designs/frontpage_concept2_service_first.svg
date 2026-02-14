@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#ffffff}
+    .top{fill:#0f9d58}
+    .hero{fill:#e6f4ea}
+    .panel{fill:#ffffff;stroke:#e6edf0}
+    .title{font:700 18px sans-serif;fill:#0f172a}
+    .muted{font:400 13px sans-serif;fill:#475569}
+  </style>
+  <rect class="bg" x="0" y="0" width="1200" height="800"/>
+  <rect class="top" x="0" y="0" width="1200" height="64"/>
+  <text x="28" y="42" class="title" fill="#fff">Servis — Quick Create</text>
+
+  <rect x="28" y="88" width="1144" height="220" class="hero" rx="10"/>
+  <text x="48" y="122" class="title">Rýchly formulár prijatia servisu</text>
+  <text x="48" y="150" class="muted">Vyber zákazníka, bike, stručný popis — vytvorenie v 1 kroku</text>
+  <rect x="48" y="168" width="360" height="40" class="panel" rx="6"/>
+  <rect x="420" y="168" width="360" height="40" class="panel" rx="6"/>
+  <rect x="792" y="168" width="280" height="40" class="panel" rx="6"/>
+
+  <g transform="translate(28,328)">
+    <rect class="panel" x="0" y="0" width="560" height="420" rx="8"/>
+    <text x="20" y="28" class="title">Dnes (prioritné)</text>
+    <rect x="20" y="60" width="520" height="80" fill="#fff" stroke="#e6edf0" rx="6"/>
+    <rect x="20" y="152" width="520" height="80" fill="#fff" stroke="#e6edf0" rx="6"/>
+
+    <rect x="20" y="244" width="520" height="120" fill="#fff" stroke="#e6edf0" rx="6"/>
+  </g>
+
+  <g transform="translate(608,328)">
+    <rect class="panel" x="0" y="0" width="564" height="420" rx="8"/>
+    <text x="20" y="28" class="title">Fotogaléria</text>
+    <rect x="20" y="60" width="240" height="120" fill="#f8fafc" stroke="#e6edf0" rx="6"/>
+    <rect x="280" y="60" width="240" height="120" fill="#f8fafc" stroke="#e6edf0" rx="6"/>
+    <rect x="20" y="200" width="500" height="200" fill="#f8fafc" stroke="#e6edf0" rx="6"/>
+  </g>
+</svg>

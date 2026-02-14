@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .chat-wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    height: calc(100vh - 170px);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .chat-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    flex-wrap:wrap;
+    flex:0 0 auto;
+  }
+
+  .chat-card{
+    margin-top:10px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:white;
+    overflow:hidden;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .chat-messages{
+    padding:10px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    background:#f9fafb;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:none;
+    overflow-y:auto;
+  }
+
+  .msg-row{
+    display:flex;
+    width:100%;
+  }
+  .msg-row.left{ justify-content:flex-start; }
+  .msg-row.right{ justify-content:flex-end; }
+
+  .msg{
+    max-width: 78%;
+    border-radius:16px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    background:white;
+    color:#111827;
+    white-space:pre-wrap;
+    line-height:1.35;
+  }
+
+  .msg.customer{
+    border-color: var(--orangeLine);
+    background: var(--orangeBg);
+    color: var(--orangeText);
+  }
+
+  .msg-meta{
+    margin-top:6px;
+    font-size:12px;
+    color: var(--muted);
+    font-weight:700;
+  }
+
+  .chat-form{
+    padding:10px 12px;
+    border-top:1px solid var(--line);
+    background:white;
+    flex:0 0 auto;
+  }
+
+  .chat-form textarea{
+    resize: vertical;
+  }
+
+  .chat-actions{
+    margin-top:10px;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .closed-note{
+    padding:10px 12px;
+    border-top:1px solid var(--line);
+    background:#fff;
+    color:var(--muted);
+    font-weight:800;
+  }
+  @media (max-width: 980px){
+    .chat-wrap{
+      height:auto;
+      overflow:visible;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-wrap">
+  <div class="chat-head">
+    <div>
+      <div class="title">{{ ticket.subject|default:"Ticket" }}</div>
+      <p class="subtitle">
+        Servis #{{ ticket.order.service_code|default:ticket.order.id }} · {{ ticket.order.bike.brand }} {{ ticket.order.bike.model }}
+      </p>
+      <div class="small" style="margin-top:6px;">
+        Status: {{ ticket.get_status_display }}
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn btn-light" href="{% url 'customer_ticket_list' %}">Späť</a>
+      <a class="btn btn-light" href="{% url 'bike_detail' ticket.order.bike.id %}">Detail bicykla</a>
+    </div>
+  </div>
+
+  <div class="chat-card">
+    <div class="chat-messages" id="chat-messages">
+      {% for m in ticket.messages.all|dictsort:"created_at" %}
+        {% if m.role == "CUSTOMER" %}
+          <div class="msg-row right">
+            <div class="msg customer">
+              {{ m.message }}
+              <div class="msg-meta">{{ m.created_at|date:"d.m.Y H:i" }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="msg-row left">
+            <div class="msg">
+              {{ m.message }}
+              <div class="msg-meta">Servis · {{ m.created_at|date:"d.m.Y H:i" }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% empty %}
+        <div class="small" style="color:var(--muted); font-weight:800;">
+          Zatiaľ tu nie je žiadna správa.
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if is_closed %}
+      <div class="closed-note">
+        Ticket je zatvorený. Ak potrebuješ niečo doplniť, vytvor nový ticket k servisu.
+      </div>
+    {% else %}
+      <div class="chat-form">
+        <form method="post">
+          {% csrf_token %}
+          <div class="label">Tvoja správa</div>
+          <textarea class="input" name="message" rows="2" style="margin-top:8px;" placeholder="Napíš správu"></textarea>
+          <div class="chat-actions">
+            <button class="btn btn-orange" type="submit">Odoslať</button>
+          </div>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function(){
+    const el = document.getElementById("chat-messages");
+    if (el){ el.scrollTop = el.scrollHeight; }
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+<!-- templates/tickets_customer_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Moje tickety</div>
+    <p class="subtitle">Tu nájdeš komunikáciu k servisom. Najrýchlejšie je písať k poslednému servisu.</p>
+  </div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'customer_home' %}">Späť na dashboard</a>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; margin-bottom:10px;">Čaká na servis</div>
+
+      {% if waiting_service %}
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          {% for t in waiting_service %}
+            <a href="{% url 'customer_ticket_detail' t.id %}" style="text-decoration:none;">
+              <div class="card" style="box-shadow:none;">
+                <div class="card-pad" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+                    <div style="font-weight:900;">{{ t.subject|default:"Ticket" }}</div>
+                    <div class="small">{{ t.updated_at|date:"d.m.Y H:i" }}</div>
+                  </div>
+                  <div class="small" style="margin-top:6px;">
+                    Servis #{{ t.order.service_code|default:t.order_id }} · {{ t.order.bike.brand }} {{ t.order.bike.model }}
+                  </div>
+                  <div style="margin-top:8px;">
+                    <span class="chip chip-orange">Čaká na servis</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Nemáš žiadny ticket, ktorý čaká na servis.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; margin-bottom:10px;">Čaká na teba</div>
+
+      {% if waiting_me %}
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          {% for t in waiting_me %}
+            <a href="{% url 'customer_ticket_detail' t.id %}" style="text-decoration:none;">
+              <div class="card" style="box-shadow:none;">
+                <div class="card-pad" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+                    <div style="font-weight:900;">{{ t.subject|default:"Ticket" }}</div>
+                    <div class="small">{{ t.updated_at|date:"d.m.Y H:i" }}</div>
+                  </div>
+                  <div class="small" style="margin-top:6px;">
+                    Servis #{{ t.order.service_code|default:t.order_id }} · {{ t.order.bike.brand }} {{ t.order.bike.model }}
+                  </div>
+                  <div style="margin-top:8px;">
+                    <span class="chip chip-blue">Čaká na teba</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Nemáš žiadny ticket, ktorý čaká na teba.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; margin-bottom:10px;">Zatvorené</div>
+
+      {% if closed %}
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          {% for t in closed %}
+            <a href="{% url 'customer_ticket_detail' t.id %}" style="text-decoration:none;">
+              <div class="card" style="box-shadow:none;">
+                <div class="card-pad" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+                    <div style="font-weight:900;">{{ t.subject|default:"Ticket" }}</div>
+                    <div class="small">{{ t.updated_at|date:"d.m.Y H:i" }}</div>
+                  </div>
+                  <div class="small" style="margin-top:6px;">
+                    Servis #{{ t.order.service_code|default:t.order_id }} · {{ t.order.bike.brand }} {{ t.order.bike.model }}
+                  </div>
+                  <div style="margin-top:8px;">
+                    <span class="chip chip-gray">Zatvorený</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Zatiaľ nemáš zatvorené tickety.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

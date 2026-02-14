@@ -1,0 +1,505 @@
+{# templates/servis_panel.html #}
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .tile-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+  }
+
+  .tile{
+    cursor:pointer;
+    transition: transform .12s ease, filter .12s ease;
+  }
+
+  .tile-link:hover .tile{
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+  }
+
+  .sp-kpi{
+    padding:6px 9px;
+    min-height:60px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:5px;
+  }
+
+  .sp-kpi-title{
+    font-weight:900;
+    font-size:14px;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .sp-kpi-meta{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+
+  .sp-kpi-value{
+    font-weight:900;
+    font-size:14px;
+    line-height:1;
+    flex:0 0 auto;
+  }
+
+  .sp-kpi-note{
+    font-weight:900;
+    font-size:14px;
+    line-height:1.1;
+    opacity:.95;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .sp-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .sp-sub{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .sp-sticky{
+    position:sticky;
+    top:12px;
+    z-index:20;
+    margin-top:14px;
+    padding:12px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.92);
+    backdrop-filter: blur(6px);
+    border-radius:16px;
+    box-shadow: 0 10px 25px rgba(17,24,39,.06);
+    display:grid;
+    gap:12px;
+  }
+
+  .sp-tabs{
+    display:flex;
+    gap:8px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+  }
+
+  .sp-tabs .btn{
+    min-width:112px;
+    height:38px;
+    padding:0 14px;
+    font-size:13px;
+    border-radius:12px;
+  }
+
+  /* Replace dark controls with a new teal accent just for this screen */
+  .sp-sticky .btn-dark,
+  .table-wrap .btn-dark,
+  .sp-head .btn-dark,
+  .sp-search-btn.btn-dark{
+    background:#0f766e;
+    border-color:#0f766e;
+    color:#ffffff;
+  }
+
+  .sp-sticky .btn-dark:hover,
+  .table-wrap .btn-dark:hover,
+  .sp-head .btn-dark:hover,
+  .sp-search-btn.btn-dark:hover{
+    filter:brightness(1.04);
+  }
+
+  .sp-filters{
+    display:grid;
+    grid-template-columns: minmax(260px, 1.2fr) auto minmax(320px, 1fr);
+    gap:12px;
+    align-items:end;
+    width:100%;
+  }
+
+  .sp-filter-field .label{
+    margin-bottom:8px;
+  }
+
+  .sp-filter-field .input{
+    width:100%;
+    max-width:none;
+    height:44px;
+    font-size:14px;
+  }
+
+  .sp-search-wrap{
+    min-width:0;
+  }
+
+  .sp-search-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+
+  .sp-search-row .input{
+    flex:1 1 auto;
+    min-width:0;
+    width:auto;
+    max-width:none;
+  }
+
+  .sp-search-btn{
+    white-space:nowrap;
+    min-width:96px;
+    height:44px;
+    padding:0 18px;
+    font-size:14px;
+  }
+
+  .sp-select{
+    min-width:220px;
+  }
+
+  .sp-check{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    height:44px;
+    padding:0 14px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:white;
+    font-weight:900;
+    font-size:14px;
+    color:#111827;
+    user-select:none;
+  }
+
+  .sp-check-group{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    padding-bottom:1px;
+  }
+  .sp-check input{
+    width:16px;
+    height:16px;
+  }
+
+  .sp-row-waiting td{
+    background:#fff7ed;
+  }
+  .sp-row-waiting td:first-child{
+    box-shadow: inset 4px 0 0 rgba(249,115,22,.45);
+  }
+
+  .sp-inline-form{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .sp-inline-select{
+    width:170px;
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:white;
+    font-weight:900;
+    font-size:13px;
+    color:#111827;
+  }
+
+  .sp-inline-btn{
+    padding:8px 12px;
+    border-radius:12px;
+  }
+
+  .sp-price{
+    font-weight:900;
+    font-size:14px;
+    line-height:1.1;
+    white-space:nowrap;
+  }
+
+  .sp-bike-name{
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .sp-issue{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    line-height:1.3;
+    max-height:2.6em;
+  }
+
+  .sp-created-at{
+    white-space:nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 980px){
+    .sp-filters{
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .sp-select{
+      width:100%;
+      min-width:0;
+    }
+    .sp-inline-form{
+      flex-direction:column;
+      align-items:stretch;
+      gap:8px;
+    }
+    .sp-inline-select{
+      width:100%;
+    }
+    .sp-price{
+      font-size:13px;
+    }
+    .sp-search-row{
+      flex-direction:column;
+      align-items:stretch;
+    }
+    .sp-search-btn{
+      width:100%;
+    }
+    .sp-check-group{
+      align-items:stretch;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card card-pad">
+
+  <div class="sp-head">
+    <div>
+      <div class="title">Servis panel</div>
+      <div class="sp-sub">Aktívne a dokončené zákazky, rýchle vyhľadávanie a tickety.</div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <a class="btn btn-light" href="{% url 'create_customer_with_bike' %}">Nový zákazník</a>
+      <a class="btn btn-orange" href="{% url 'create_service_order' %}">Nový servis</a>
+      <a class="btn btn-orange" href="{{ waiting_tickets_url }}">
+        Otvoriť tickety
+        {% if waiting_tickets_count|default:0 > 0 %}
+          <span class="badge badge-red">{{ waiting_tickets_count }}</span>
+        {% endif %}
+      </a>
+    </div>
+  </div>
+
+  <div class="tile-row" style="margin-top:14px;">
+    <a class="tile-link" href="{% url 'service_panel' %}?tab=active&tickets=waiting">
+      <div class="tile orange sp-kpi">
+        <div class="sp-kpi-title">Tickety čakajúce na odpoveď</div>
+        <div class="sp-kpi-meta">
+          <div class="sp-kpi-value">{{ waiting_tickets_count }}</div>
+          <div class="sp-kpi-note">Čaká na servis</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="tile-link" href="{% url 'service_panel' %}?tab=active&status={{ STATUS_NEW }}">
+      <div class="tile blue sp-kpi">
+        <div class="sp-kpi-title">Zákazky nové</div>
+        <div class="sp-kpi-meta">
+          <div class="sp-kpi-value">{{ stat_orders_new }}</div>
+          <div class="sp-kpi-note">Stav Nová</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="tile-link" href="{% url 'service_panel' %}?tab=active&status={{ STATUS_IN_PROGRESS }}">
+      <div class="tile green sp-kpi">
+        <div class="sp-kpi-title">Zákazky v procese</div>
+        <div class="sp-kpi-meta">
+          <div class="sp-kpi-value">{{ stat_orders_in_progress }}</div>
+          <div class="sp-kpi-note">Prebieha oprava</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="tile-link" href="{% url 'admin_ticket_list' %}">
+      <div class="tile dark sp-kpi">
+        <div class="sp-kpi-title">Nedokončené</div>
+        <div class="sp-kpi-meta">
+          <div class="sp-kpi-value">{{ unfinished_count }}</div>
+          <div class="sp-kpi-note">Všetky tickety</div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="sp-sticky">
+    <div class="sp-tabs">
+      <a class="btn {% if active_tab != 'completed' %}btn-dark{% else %}btn-light{% endif %}"
+         href="{% url 'service_panel' %}?tab=active{% if query %}&q={{ query|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if tickets_filter %}&tickets={{ tickets_filter }}{% endif %}">
+        Aktívne
+      </a>
+
+      <a class="btn {% if active_tab == 'completed' %}btn-dark{% else %}btn-light{% endif %}"
+         href="{% url 'service_panel' %}?tab=completed{% if query %}&q={{ query|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if tickets_filter %}&tickets={{ tickets_filter }}{% endif %}{% if done_today_filter %}&done_today={{ done_today_filter }}{% endif %}">
+        Dokončené
+      </a>
+    </div>
+
+    <form method="get" class="sp-filters">
+      <input type="hidden" name="tab" value="{{ active_tab }}">
+
+      <div class="sp-filter-field">
+        <div class="label">Stav</div>
+        <select class="input sp-select" name="status">
+          <option value="">Všetky</option>
+          {% for s in status_choices %}
+            <option value="{{ s.0 }}" {% if status_filter == s.0 %}selected{% endif %}>{{ s.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="sp-check-group">
+        <label class="sp-check">
+          <input type="checkbox" name="tickets" value="waiting" {% if tickets_filter == "waiting" %}checked{% endif %}>
+          Len s ticketom čakajúcim
+        </label>
+        {% if active_tab == "completed" %}
+          <label class="sp-check">
+            <input type="checkbox" name="done_today" value="1" {% if done_today_filter == "1" %}checked{% endif %}>
+            Dokončené dnes
+          </label>
+        {% endif %}
+      </div>
+
+      <div class="sp-search-wrap sp-filter-field">
+        <div class="label">Hľadať</div>
+        <div class="sp-search-row">
+          <input class="input" type="text" name="q" value="{{ query }}" placeholder="Hľadať meno, tel., SN, #kód, ticket...">
+          <button class="btn btn-dark sp-search-btn" type="submit">Použiť</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-wrap" style="margin-top:14px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Zákazník</th>
+          <th>Bicykel</th>
+          <th>Servis</th>
+          <th>Vada</th>
+          <th>Vytvorené</th>
+          <th>Stav</th>
+          <th>Cena</th>
+          <th>Akcia</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for o in orders %}
+          <tr class="{% if o.id in waiting_ticket_order_ids %}sp-row-waiting{% endif %}">
+            <td>
+              <div style="font-weight:900;">{{ o.bike.customer.full_name|default:o.bike.customer.email }}</div>
+              <div class="small">{{ o.bike.customer.email }}</div>
+              {% if o.bike.customer.phone_number %}<div class="small">{{ o.bike.customer.phone_number }}</div>{% endif %}
+
+              {% if o.id in waiting_ticket_order_ids %}
+                <div style="margin-top:8px;">
+                  <span class="chip chip-orange">Ticket čaká</span>
+                </div>
+              {% endif %}
+            </td>
+
+            <td>
+              <div class="sp-bike-name" title="{{ o.bike.brand }} {{ o.bike.model }}">{{ o.bike.brand }} {{ o.bike.model }}</div>
+              <div class="small">Sériové číslo {{ o.bike.serial_number|default:"nezadané" }}</div>
+            </td>
+
+            <td>
+              <div style="font-weight:900;">#{{ o.service_code|default:o.id }}</div>
+            </td>
+
+            <td style="max-width:520px;">
+              <div class="sp-issue" title="{{ o.issue_description|default:'' }}">{{ o.issue_description|default:"" }}</div>
+            </td>
+
+            <td>
+              <div class="muted sp-created-at">{{ o.created_at|date:"d.m.Y H:i" }}</div>
+            </td>
+
+            <td>
+              <form method="post" class="sp-inline-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="row_update_status">
+                <input type="hidden" name="order_id" value="{{ o.id }}">
+                <input type="hidden" name="tab" value="{{ active_tab }}">
+                <input type="hidden" name="q" value="{{ query }}">
+                <input type="hidden" name="status" value="{{ status_filter }}">
+                <input type="hidden" name="tickets" value="{{ tickets_filter }}">
+                <input type="hidden" name="done_today" value="{{ done_today_filter }}">
+                <input type="hidden" name="page" value="{{ page_obj.number }}">
+
+                <select class="sp-inline-select" name="new_status">
+                  {% for s in status_choices %}
+                    <option value="{{ s.0 }}" {% if o.status == s.0 %}selected{% endif %}>{{ s.1 }}</option>
+                  {% endfor %}
+                </select>
+
+                <button class="btn btn-dark sp-inline-btn" type="submit">Uložiť</button>
+              </form>
+
+            </td>
+
+            <td>
+              <div class="sp-price">{{ o.price|default:"0,00" }} €</div>
+            </td>
+
+            <td>
+              <a class="btn btn-dark" href="{% url 'service_order_admin_detail' o.id %}">Detail</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="8" class="muted">Žiadne výsledky.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-light" href="?tab={{ active_tab }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if tickets_filter %}&tickets={{ tickets_filter }}{% endif %}{% if done_today_filter %}&done_today={{ done_today_filter }}{% endif %}&page={{ page_obj.previous_page_number }}">Predchádzajúca</a>
+      {% endif %}
+      <span class="small">Strana {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a class="btn btn-light" href="?tab={{ active_tab }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if tickets_filter %}&tickets={{ tickets_filter }}{% endif %}{% if done_today_filter %}&done_today={{ done_today_filter }}{% endif %}&page={{ page_obj.next_page_number }}">Ďalšia</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

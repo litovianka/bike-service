@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Môj profil{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- ľavý stĺpec – osobné údaje -->
+  <div class="col-12 col-lg-5 mb-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header">
+        <strong>Osobné údaje</strong>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="save_profile">
+
+          <div class="mb-3">
+            <label class="form-label" for="id_name">Meno a priezvisko</label>
+            {{ customer_form.name }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_email">E-mail</label>
+            {{ customer_form.email }}
+            <small class="form-text text-muted">
+              Tento e-mail používame aj pre prihlásenie.
+            </small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_phone">Telefón</label>
+            {{ customer_form.phone }}
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Uložiť profil
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- pravý stĺpec – bicykle -->
+  <div class="col-12 col-lg-7 mb-4">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Moje bicykle</strong>
+      </div>
+      <div class="card-body">
+        {% if bikes %}
+          <div class="row g-3">
+            {% for bike in bikes %}
+              <div class="col-12">
+                <div class="border rounded p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <div>
+                    <div class="fw-semibold">
+                      {{ bike.brand }} {{ bike.model }}
+                    </div>
+                    <div class="small text-muted">
+                      {% if bike.year %}Rok výroby: {{ bike.year }}{% endif %}
+                      {% if bike.serial_number %}
+                        {% if bike.year %}&nbsp;|&nbsp;{% endif %}
+                        Sériové číslo: {{ bike.serial_number }}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div>
+                    <a href="{% url 'bike_detail' bike.id %}"
+                       class="btn btn-outline-primary btn-sm">
+                      Zobraziť servisnú históriu
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">
+            Zatiaľ nemáte uložený žiadny bicykel.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header">
+        <strong>Pridať nový bicykel</strong>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_bike">
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="id_brand">Značka</label>
+              {{ bike_form.brand }}
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="id_model">Model</label>
+              {{ bike_form.model }}
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="id_year">Rok výroby</label>
+              {{ bike_form.year }}
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="id_serial_number">Sériové číslo</label>
+              {{ bike_form.serial_number }}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success mt-3">
+            Pridať bicykel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

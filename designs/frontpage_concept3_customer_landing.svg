@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#f8fafc}
+    .hero{fill:#0ea5e9}
+    .card{fill:#fff;stroke:#e6eef6}
+    .title{font:700 20px sans-serif;fill:#0f172a}
+    .muted{font:400 13px sans-serif;fill:#475569}
+  </style>
+  <rect class="bg" x="0" y="0" width="1200" height="800"/>
+  <rect class="hero" x="0" y="0" width="1200" height="260"/>
+  <text x="48" y="88" font-size="34" fill="#fff" font-family="sans-serif">Potrebujete servis? Objednajte online</text>
+  <text x="48" y="120" class="muted" fill="#fff">Rýchly proces, sledovanie stavu, notifikácie</text>
+  <rect x="48" y="150" width="420" height="44" rx="8" fill="#fff"/>
+
+  <g transform="translate(48,300)">
+    <rect class="card" x="0" y="0" width="360" height="200" rx="8"/>
+    <text x="20" y="32" class="title">Sledovanie stavu</text>
+    <rect x="20" y="60" width="320" height="20" fill="#eef2ff" rx="6"/>
+  </g>
+
+  <g transform="translate(440,300)">
+    <rect class="card" x="0" y="0" width="360" height="200" rx="8"/>
+    <text x="20" y="32" class="title">Cenník a služby</text>
+    <text x="20" y="60" class="muted">Prehľad balíčkov, orientačné ceny</text>
+  </g>
+
+  <g transform="translate(832,300)">
+    <rect class="card" x="0" y="0" width="360" height="200" rx="8"/>
+    <text x="20" y="32" class="title">Rýchla registrácia</text>
+    <text x="20" y="60" class="muted">Vytvor účet a pridať bike za 2 minúty</text>
+  </g>
+</svg>

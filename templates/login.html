@@ -1,0 +1,46 @@
+<!-- templates/login.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head" style="justify-content:center;">
+    <div style="width:520px; max-width:92vw;">
+      <div class="card">
+        <div class="card-pad">
+          <div class="title" style="font-size:20px;">Prihlásenie</div>
+          <p class="subtitle">Použi meno a heslo, ktoré si dostal od servisu.</p>
+
+          {% if error %}
+            <div class="card" style="margin-top:12px; border-color:#fecaca; background:#fef2f2; box-shadow:none;">
+              <div class="card-pad" style="padding:12px;">
+                <div style="font-weight:900; color:#991b1b;">{{ error }}</div>
+              </div>
+            </div>
+          {% endif %}
+
+          <form method="post" style="margin-top:14px;">
+            {% csrf_token %}
+
+            <div style="margin-top:10px;">
+              <label class="label">Meno</label>
+              <input class="input" type="text" name="username" autocomplete="username" required>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label class="label">Heslo</label>
+              <input class="input" type="password" name="password" autocomplete="current-password" required>
+            </div>
+
+            <div style="margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-dark" type="submit">Prihlásiť</button>
+              <a class="btn btn-light" href="{% url 'home_redirect' %}">Späť</a>
+            </div>
+          </form>
+
+          <div class="small" style="margin-top:14px;">
+            Ak si zabudol heslo, ozvi sa servisu a resetneme ti ho.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

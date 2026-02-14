@@ -1,0 +1,16 @@
+<!-- templates/admin/base_site.html -->
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'service/admin_custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <h1 id="site-name">
+    <a href="{% url 'admin:index' %}">Bike Service Admin</a>
+  </h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

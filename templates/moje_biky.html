@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Moje biky{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;">
+        <div>
+            <div class="page-title" style="margin-bottom:4px;">Moje biky</div>
+            <div class="small" style="color:#6b7280;">
+                Prehľad bicyklov a posledného servisu
+            </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <a class="btn btn-light" href="{% url 'customer_ticket_list' %}" style="text-decoration:none;">
+                Moje tickety
+            </a>
+        </div>
+    </div>
+
+    <div style="margin-top:16px; overflow:auto;">
+        <table style="width:100%; border-collapse:collapse; min-width:860px;">
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding:12px 10px; border-bottom:1px solid #e5e7eb;">Bicykel</th>
+                    <th style="text-align:left; padding:12px 10px; border-bottom:1px solid #e5e7eb;">Posledný servis</th>
+                    <th style="text-align:left; padding:12px 10px; border-bottom:1px solid #e5e7eb;">Stav</th>
+                    <th style="text-align:left; padding:12px 10px; border-bottom:1px solid #e5e7eb;">Cena</th>
+                    <th style="text-align:left; padding:12px 10px; border-bottom:1px solid #e5e7eb;">Akcia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bikes %}
+                    {% for b in bikes %}
+                        <tr>
+                            <td style="padding:12px 10px; border-bottom:1px solid #e5e7eb;">
+                                <div style="font-weight:600;">
+                                    <a href="{% url 'bike_detail' b.id %}" style="text-decoration:none;">
+                                        {{ b.brand }} {{ b.model }}
+                                    </a>
+                                </div>
+                                {% if b.serial_number %}
+                                    <div class="small" style="color:#6b7280;">S/N {{ b.serial_number }}</div>
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px 10px; border-bottom:1px solid #e5e7eb;">
+                                {% if b.last_order %}
+                                    <div style="font-weight:600;">#{{ b.last_order.id }}</div>
+                                    <div class="small" style="color:#6b7280;">
+                                        {{ b.last_order.created_at|date:"d.m.Y H:i" }}
+                                    </div>
+                                {% else %}
+                                    <div class="small" style="color:#6b7280;">Zatiaľ bez servisu</div>
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px 10px; border-bottom:1px solid #e5e7eb;">
+                                {% if b.last_order %}
+                                    <span class="badge badge-blue">{{ b.last_order.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-gray">Bez servisu</span>
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px 10px; border-bottom:1px solid #e5e7eb;">
+                                {% if b.last_order %}
+                                    {{ b.last_order.price }} €
+                                {% else %}
+                                    <span class="small" style="color:#6b7280;">—</span>
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px 10px; border-bottom:1px solid #e5e7eb;">
+                                {% if b.last_order %}
+                                    <a class="btn btn-primary" href="{% url 'customer_ticket_create' b.last_order.id %}" style="text-decoration:none;">
+                                        Napísať otázku k servisu
+                                    </a>
+                                {% else %}
+                                    <span class="small" style="color:#6b7280;">Ticket vieš založiť až k servisu</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="padding:16px 10px; color:#6b7280;">
+                            Zatiaľ nemáš pridaný žiadny bicykel.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

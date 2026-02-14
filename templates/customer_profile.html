@@ -1,0 +1,170 @@
+{# templates/customer_profile.html #}
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .profile-wrap{
+    display:grid;
+    grid-template-columns: 360px 1fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 980px){
+    .profile-wrap{ grid-template-columns: 1fr; }
+  }
+
+  .avatar{
+    width:76px;
+    height:76px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    overflow:hidden;
+    background:#f9fafb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#111827;
+  }
+  .avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+    margin-top:12px;
+  }
+  @media (max-width: 980px){
+    .kpi{ grid-template-columns: 1fr; }
+  }
+  .kpi-box{
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    background:#fff;
+  }
+  .kpi-label{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:800;
+  }
+  .kpi-value{
+    margin-top:6px;
+    font-size:22px;
+    font-weight:900;
+  }
+
+  .hint{
+    margin-top:10px;
+    background:var(--orangeBg);
+    border:1px solid var(--orangeLine);
+    color:var(--orangeText);
+    border-radius:14px;
+    padding:12px;
+    font-weight:800;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Môj profil</div>
+    <p class="subtitle">Nastavenia účtu a prehľad odmien.</p>
+  </div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'loyalty_landing' %}">Ako fungujú odmeny</a>
+    <a class="btn btn-light" href="{% url 'customer_change_password' %}">Zmena hesla</a>
+  </div>
+</div>
+
+<div class="profile-wrap">
+  <div class="card">
+    <div class="card-pad">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="avatar">
+          {% if avatar_url %}
+            <img src="{{ avatar_url }}" alt="avatar" loading="lazy" decoding="async">
+          {% else %}
+            {{ profile.full_name|default:profile.email|slice:":1" }}
+          {% endif %}
+        </div>
+        <div>
+          <div style="font-weight:900; font-size:16px;">{{ profile.full_name|default:profile.email }}</div>
+          <div class="small">{{ profile.email }}</div>
+          {% if profile.phone_number %}
+            <div class="small">{{ profile.phone_number }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="hint">
+        Tip: avatar sa zatiaľ berie automaticky podľa emailu. Keď dáme upload fotky priamo do profilu, prepíšeme to jedným klikom.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; font-size:14px;">Kontaktné údaje</div>
+
+      <form method="post" style="margin-top:12px; display:grid; gap:12px;">
+        {% csrf_token %}
+        <div>
+          <label class="label">Meno</label>
+          <input class="input" type="text" name="full_name" value="{{ profile.full_name }}">
+        </div>
+        <div>
+          <label class="label">Telefón</label>
+          <input class="input" type="text" name="phone_number" value="{{ profile.phone_number }}">
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn btn-dark" type="submit">Uložiť</button>
+        </div>
+      </form>
+
+      <div style="margin-top:18px; border-top:1px solid var(--line); padding-top:16px;">
+        <div style="font-weight:900; font-size:14px;">Odmeny</div>
+        <div class="small" style="margin-top:6px;">
+          Zbieraš 1 bod za každé 2 € z dokončeného servisu. Každých 10 bodov je 1 € zľava.
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-box">
+            <div class="kpi-label">Body</div>
+            <div class="kpi-value">{{ loyalty.loyalty_points }}</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Dostupná zľava</div>
+            <div class="kpi-value">{{ loyalty.loyalty_discount_eur }} €</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Minuté na servise</div>
+            <div class="kpi-value">{{ loyalty.loyalty_total_spent }} €</div>
+          </div>
+        </div>
+
+        {% if loyalty.loyalty_points_to_next_eur and loyalty.loyalty_points_to_next_eur > 0 %}
+          <div class="small" style="margin-top:10px;">
+            Do ďalšieho 1 € zľavy ti chýba {{ loyalty.loyalty_points_to_next_eur }} bodov.
+          </div>
+        {% else %}
+          <div class="small" style="margin-top:10px;">
+            Máš pripravenú zľavu. Pri najbližšej návšteve ju vieš uplatniť.
+          </div>
+        {% endif %}
+
+        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn btn-orange" href="{% url 'loyalty_landing' %}">Pozrieť pravidlá</a>
+          <a class="btn btn-light" href="{% url 'customer_home' %}">Späť na moje biky</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

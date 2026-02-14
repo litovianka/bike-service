@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <style>
+    .bg{fill:#f3f6f9}
+    .top{fill:#ffffff;stroke:#e6edf3}
+    .brand{fill:#0b2545;font:700 22px/1.2 'Segoe UI',sans-serif}
+    .kcard{stroke:none}
+    .klabel{font:700 12px sans-serif;fill:#fff}
+    .kvalue{font:800 18px sans-serif;fill:#fff}
+    .panel{fill:#fff;stroke:#e6edf3}
+    .muted{font:400 13px sans-serif;fill:#6b7280}
+    .table-head{font:700 13px sans-serif;fill:#111827}
+    .btn{fill:#0b2545}
+    .accent{fill:#ff7a00}
+  </style>
+  <defs>
+    <linearGradient id="gA" x1="0" x2="1">
+      <stop offset="0" stop-color="#ff7a59"/>
+      <stop offset="1" stop-color="#ffb86b"/>
+    </linearGradient>
+    <linearGradient id="gB" x1="0" x2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="gC" x1="0" x2="1">
+      <stop offset="0" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="gD" x1="0" x2="1">
+      <stop offset="0" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect class="bg" width="1400" height="900"/>
+
+  <!-- Header -->
+  <rect class="top" x="0" y="0" width="1400" height="84"/>
+  <text x="36" y="52" class="brand">Servis panel</text>
+  <rect x="1180" y="18" width="180" height="48" rx="10" class="btn"/>
+  <text x="1208" y="48" font-family="sans-serif" font-size="14" fill="#fff">Otvoriť ticket</text>
+
+  <!-- KPI row (smaller, colorful bubbles) -->
+  <g transform="translate(36,110)">
+    <rect x="0" y="0" width="200" height="80" rx="12" fill="url(#gA)"/>
+    <text x="16" y="26" class="klabel">Tickety čakajúce</text>
+    <text x="16" y="56" class="kvalue">0</text>
+
+    <rect x="228" y="0" width="200" height="80" rx="12" fill="url(#gB)"/>
+    <text x="244" y="26" class="klabel">Zákazky nové</text>
+    <text x="244" y="56" class="kvalue">4</text>
+
+    <rect x="456" y="0" width="200" height="80" rx="12" fill="url(#gC)"/>
+    <text x="472" y="26" class="klabel">V procese</text>
+    <text x="472" y="56" class="kvalue">1</text>
+
+    <rect x="684" y="0" width="200" height="80" rx="12" fill="url(#gD)"/>
+    <text x="700" y="26" class="klabel">Dokončené dnes</text>
+    <text x="700" y="56" class="kvalue">0</text>
+  </g>
+
+  <!-- Filters & Actions -->
+  <g transform="translate(36,252)">
+    <rect class="panel" x="0" y="0" width="1288" height="120" rx="12"/>
+    <text x="24" y="34" class="table-head">Stav</text>
+    <rect x="24" y="46" width="220" height="40" rx="8" fill="#f8fafc" stroke="#e6edf3"/>
+    <text x="260" y="74" class="muted">Len s ticketom čakajúcim</text>
+    <rect x="480" y="46" width="520" height="40" rx="20" fill="#fff" stroke="#e6edf3"/>
+    <text x="996" y="74" class="muted">Vyhľadať zákazníka, bike, SN, vadu...</text>
+    <rect x="1180" y="46" width="120" height="40" rx="20" class="btn"/>
+    <text x="1208" y="74" font-size="14" fill="#fff">Použiť</text>
+  </g>
+
+  <!-- Table area -->
+  <g transform="translate(36,392)">
+    <rect class="panel" x="0" y="0" width="1288" height="420" rx="12"/>
+    <text x="24" y="34" class="table-head">Zákazník</text>
+    <text x="360" y="34" class="table-head">Bicykel</text>
+    <text x="640" y="34" class="table-head">Servis</text>
+    <text x="760" y="34" class="table-head">Vada</text>
+    <text x="980" y="34" class="table-head">Vytvorené</text>
+    <text x="1120" y="34" class="table-head">Stav</text>
+    <text x="1220" y="34" class="table-head">Akcia</text>
+
+    <!-- Example rows -->
+    <g transform="translate(0,52)">
+      <rect x="20" y="0" width="1248" height="84" rx="8" fill="#fff" stroke="#f1f5f9"/>
+      <text x="40" y="28" class="muted">radko — litavec@gmail.com — 09082607000</text>
+      <text x="360" y="28">olpran</text>
+      <text x="640" y="28">#9</text>
+      <text x="760" y="28" class="muted">riso nechce robit</text>
+      <text x="980" y="28" class="muted">03.01.2026 14:35</text>
+      <rect x="1120" y="8" width="80" height="36" rx="10" fill="#fff" stroke="#e6edf3"/>
+      <rect x="1220" y="20" width="56" height="28" rx="10" class="btn"/>
+      <text x="1240" y="38" font-size="13" fill="#fff">Detail</text>
+    </g>
+
+    <g transform="translate(0,156)">
+      <rect x="20" y="0" width="1248" height="84" rx="8" fill="#fff" stroke="#f1f5f9"/>
+      <text x="40" y="28" class="muted">Zuzana Litavec — cc@cc.sk — 0908331231</text>
+      <text x="360" y="28">sworks epic</text>
+      <text x="640" y="28">#8</text>
+      <text x="760" y="28" class="muted">nieco tomu je</text>
+      <text x="980" y="28" class="muted">02.01.2026 01:09</text>
+      <rect x="1120" y="8" width="80" height="36" rx="10" fill="#fff" stroke="#e6edf3"/>
+      <rect x="1220" y="20" width="56" height="28" rx="10" class="btn"/>
+      <text x="1240" y="38" font-size="13" fill="#fff">Detail</text>
+    </g>
+
+  </g>
+
+  <!-- Right sticky CTA -->
+  <g transform="translate(1180,520)">
+    <rect x="0" y="0" width="180" height="140" rx="12" fill="#fff" stroke="#e6edf3"/>
+    <text x="18" y="36" font-size="14" fill="#111827">Rýchle akcie</text>
+    <rect x="18" y="56" width="148" height="40" rx="10" class="accent"/>
+    <text x="26" y="84" font-size="14" fill="#fff">Nová objednávka</text>
+  </g>
+</svg>

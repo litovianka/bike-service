@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Registrácia{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-shadow">
+            <div class="card-body p-4">
+                <h3 class="mb-3 text-center">Registrácia</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-success w-100">
+                        Vytvoriť účet
+                    </button>
+                </form>
+
+                <p class="mt-3 mb-0 text-center text-muted">
+                    Už máš účet?
+                    <a href="{% url 'login' %}">Prihlás sa</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

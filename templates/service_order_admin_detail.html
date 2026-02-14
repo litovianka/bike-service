@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .so-screen{
+    height: calc(100vh - 130px);
+    overflow: hidden;
+  }
+
+  .so-grid{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap:10px;
+    margin-top:10px;
+    height: 100%;
+  }
+
+  .so-section-title{
+    font-weight:900;
+    font-size:14px;
+    line-height:1.25;
+    margin-bottom:8px;
+  }
+
+  .so-box{
+    border:0;
+    border-radius:0;
+    padding:0;
+    background:transparent;
+  }
+
+  .so-meta{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    margin-top:12px;
+  }
+
+  .so-checklist{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+    margin-top:10px;
+  }
+
+  .so-check{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:#f9fafb;
+    font-weight:900;
+    font-size:13px;
+    color:#111827;
+  }
+  .so-check input{
+    width:16px;
+    height:16px;
+  }
+
+  .so-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:10px;
+  }
+
+  .so-col-scroll{
+    max-height: 100%;
+    overflow:auto;
+  }
+
+  .so-muted{
+    font-size:13px;
+    line-height:1.35;
+    color:#6b7280;
+    font-weight:600;
+  }
+
+  .so-history-list{
+    margin-top:8px;
+    display:grid;
+    gap:6px;
+  }
+
+  .so-history-card{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:8px 10px;
+    background:#f9fafb;
+  }
+
+  .so-history-title{
+    font-weight:800;
+    font-size:14px;
+    line-height:1.25;
+    color:#111827;
+  }
+
+  .so-history-meta{
+    margin-top:2px;
+    font-size:13px;
+    line-height:1.3;
+    color:#6b7280;
+    font-weight:600;
+    text-transform:capitalize;
+  }
+
+  .so-action-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .so-action-row .btn{
+    font-size:13px;
+    line-height:1.2;
+    padding:10px 16px;
+  }
+
+  @media (max-width: 980px){
+    .so-screen{ height:auto; overflow:visible; }
+    .so-grid{ grid-template-columns: 1fr; }
+    .so-checklist{ grid-template-columns: 1fr; }
+    .so-meta{ grid-template-columns: 1fr; }
+    .so-col-scroll{ max-height:none; overflow:visible; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom:8px;">
+  <div>
+    <div class="title">Servis #{{ order.service_code|default:order.id }}</div>
+    <p class="subtitle">
+      {{ order.bike.customer.full_name|default:order.bike.customer.email }} · {{ order.bike.brand }} {{ order.bike.model }}
+    </p>
+    <div class="small" style="margin-top:6px;">
+      Email: {{ order.bike.customer.email }}{% if order.bike.customer.phone_number %} · {{ order.bike.customer.phone_number }}{% endif %} · S/N {{ order.bike.serial_number|default:"nezadané" }}
+    </div>
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'service_panel' %}">Späť</a>
+    <a class="btn btn-light" href="{% url 'service_order_protocol_pdf' order.id %}" target="_blank">PDF protokol</a>
+  </div>
+</div>
+
+<div class="so-screen">
+<div class="so-grid">
+  <div class="card so-col-scroll">
+    <div class="card-pad" style="padding:10px;">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="so-section-title">Servisný balíček</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+          <select class="input" name="service_package" style="max-width:280px; padding-right:34px;">
+            <option value="">Vyber balík</option>
+            {% for key, pkg in service_packages %}
+              <option value="{{ key }}">{{ pkg.label }} · {{ pkg.price }} €</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-light" type="submit" name="action" value="apply_service_package">Použiť balík</button>
+        </div>
+
+        <div class="so-section-title">Nahlásená vada</div>
+        <textarea class="input" name="issue_description" rows="3" style="resize:vertical;" placeholder="Čo zákazník nahlásil">{{ order.issue_description }}</textarea>
+
+        <div style="margin-top:10px;" class="so-section-title">Čo sa urobilo</div>
+        <textarea class="input" name="work_done" rows="4" style="resize:vertical;" placeholder="Popíš prácu a výstup">{{ order.work_done }}</textarea>
+
+        <div class="so-section-title" style="margin-top:10px;">Status a termín</div>
+
+        <div class="so-meta">
+          <div>
+            <div class="label">Status</div>
+            <select class="input" name="status" style="margin-top:10px; padding-right:34px;">
+              {% for s in status_choices %}
+                <option value="{{ s.0 }}" {% if order.status == s.0 %}selected{% endif %}>{{ s.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <div class="label">Sľúbený termín</div>
+            <input class="input" type="date" name="promised_date" value="{% if order.promised_date %}{{ order.promised_date|date:'Y-m-d' }}{% endif %}" style="margin-top:10px;">
+          </div>
+        </div>
+
+        <div class="so-meta" style="margin-top:8px;">
+          <div>
+            <div class="label">Cena</div>
+            <input class="input" type="text" name="price" value="{{ order.price }}" style="margin-top:10px;">
+          </div>
+
+          <div>
+            <div class="label">Info</div>
+            <div class="so-muted" style="margin-top:6px;">
+              Keď zmeníš status na Hotová, zákazník dostane email s textom z poľa Čo sa urobilo a so zhrnutím checklistu.
+            </div>
+          </div>
+        </div>
+
+        <div class="so-actions">
+          <button class="btn btn-dark" type="submit">Uložiť</button>
+          <a class="btn btn-light" href="{% url 'admin_ticket_list' %}">Tickety</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="card so-col-scroll">
+    <div class="card-pad" style="padding:10px;">
+
+      {% if not order.bike.customer.user_id %}
+      <div class="so-box">
+        <div class="so-section-title">Pozvánka do portálu</div>
+        <div class="so-muted">Zákazník ešte nemá účet. Jedným klikom mu pošleš pozvánku.</div>
+
+        <form method="post" style="margin-top:10px;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="invite_customer_portal">
+          <button class="btn btn-orange" type="submit">Pozvať do portálu</button>
+        </form>
+      </div>
+      {% endif %}
+
+      <div class="so-box" style="margin-top:8px;">
+        <div class="so-section-title">SMS ručne</div>
+
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="send_sms">
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <input class="input" type="text" name="sms_phone" value="{{ order.bike.customer.phone_number }}" placeholder="Telefón" style="max-width:260px;">
+            <button class="btn btn-orange" type="submit">Odoslať SMS</button>
+          </div>
+
+          <textarea class="input" name="sms_text" rows="2" style="margin-top:8px; resize:vertical;" placeholder="Text SMS"></textarea>
+          <div class="so-muted" style="margin-top:6px;">
+            SMS sa odošle iba keď klikneš Odoslať SMS.
+          </div>
+        </form>
+      </div>
+
+      <div class="so-box" style="margin-top:8px;">
+        <div class="so-section-title">História zákazníka</div>
+        <div class="so-muted">Počet servisov: <strong>{{ customer_total_orders }}</strong> · Uhradené spolu: <strong>{{ customer_paid_total }} €</strong></div>
+        {% if customer_recent_orders %}
+          <div class="so-history-list">
+            {% for h in customer_recent_orders %}
+              <a href="{% url 'service_order_admin_detail' h.id %}" style="text-decoration:none; color:inherit;">
+                <div class="so-history-card">
+                  <div class="so-history-title">#{{ h.service_code|default:h.id }} · {{ h.bike.brand }} {{ h.bike.model }}</div>
+                  <div class="so-history-meta">{{ h.get_status_display }} · {{ h.created_at|date:"d.m.Y H:i" }}</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="so-muted" style="margin-top:8px;">Toto je prvý servis zákazníka.</div>
+        {% endif %}
+      </div>
+
+      <div class="so-box" style="margin-top:8px;">
+        <div class="so-section-title">Protokol do emailu po potvrdení</div>
+
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="send_protocol_email">
+
+          <div class="so-action-row">
+            <button class="btn btn-orange" type="submit">Odoslať protokol na email</button>
+            <a class="btn btn-light" href="{% url 'service_order_protocol_pdf' order.id %}" target="_blank">Náhľad PDF</a>
+          </div>
+
+          <div class="so-muted" style="margin-top:10px;">
+            Protokol sa pošle iba keď to potvrdíš klikom.
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+@staff_member_required
+def service_order_admin_detail(request, order_id):
+    """
+    Detail servisu pre admina / personál.
+    Umožní upraviť stav, popis a cenu.
+    Pri zmene stavu doplní completed_at / picked_up_at.
+    """
+    order = ServiceOrder.objects.select_related("customer", "bike").prefetch_related("photos").get(id=order_id)
+
+    old_status = order.status
+
+    if request.method == "POST":
+        form = ServiceOrderAdminForm(request.POST, instance=order)
+        if form.is_valid():
+            order = form.save(commit=False)
+
+            # Ak sa zmenil status, nastavíme dátumy
+            if old_status != order.status:
+                now = timezone.now()
+
+                # Hotovo = ukončený servis
+                if order.status == "done" and order.completed_at is None:
+                    order.completed_at = now
+
+                # Prevzaté = zákazník si už bike zobral
+                if order.status == "picked_up":
+                    if order.completed_at is None:
+                        order.completed_at = now
+                    if order.picked_up_at is None:
+                        order.picked_up_at = now
+
+            order.save()
+            # nechceme to komplikovať messages, stačí redirect
+            from django.shortcuts import redirect
+            return redirect("servis_panel")
+    else:
+        form = ServiceOrderAdminForm(instance=order)
+
+    photos = order.photos.all()  # predpoklad: related_name="photos" na ServicePhoto
+
+    from django.shortcuts import render
+    return render(
+        request,
+        "service_order_admin_detail.html",
+        {
+            "order": order,
+            "form": form,
+            "photos": photos,
+        },
+    ){% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h4 mb-3">
+    Servis bicykla – {{ order.bike.customer.full_name }} ·
+    {{ order.bike.brand }} {{ order.bike.model }}
+  </h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Nahlásená vada</label>
+      <textarea class="form-control" rows="3" readonly>{{ order.description }}</textarea>
+      <div class="form-text">Toto pole je len na čítanie, nahlásená vada pri založení servisu.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Čo sa urobilo</label>
+      <textarea
+        class="form-control"
+        name="work_done"
+        rows="4"
+      >{{ order.work_done }}</textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Cena servisu (€)</label>
+      <input
+        type="text"
+        name="price"
+        class="form-control"
+        value="{% if order.price %}{{ order.price }}{% endif %}"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Stav</label>
+      <select name="status" class="form-select">
+        {% for value, label in order.STATUS_CHOICES %}
+          <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-check mb-3">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="mark_completed"
+        name="mark_completed"
+        {% if order.completed_at %}checked disabled{% endif %}
+      >
+      <label class="form-check-label" for="mark_completed">
+        Označiť ako dokončené (a poslať zákazníkovi e-mail)
+      </label>
+      {% if order.completed_at %}
+        <div class="form-text">
+          Dokončené: {{ order.completed_at|date:"d.m.Y H:i" }}
+        </div>
+      {% endif %}
+    </div>
+
+    <button class="btn btn-primary">Uložiť zmeny</button>
+    <a href="{% url 'service_panel' %}" class="btn btn-outline-secondary ms-2">
+      Späť na servisný panel
+    </a>
+  </form>
+</div>
+{% endblock %}

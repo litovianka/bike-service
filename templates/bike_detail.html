@@ -1,0 +1,82 @@
+<!-- templates/bike_detail.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:980px; margin:0 auto;">
+  <div class="page-head">
+    <div>
+      <div class="title">{{ bike.brand }} {{ bike.model }}</div>
+      <p class="subtitle">
+        Sériové číslo: {{ bike.serial_number|default:"nezadané" }}
+      </p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn btn-light" href="{% url 'customer_home' %}">Späť</a>
+      <a class="btn btn-orange" href="{% url 'customer_ticket_list' %}">Moje tickety</a>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-pad" style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <div>
+        <div style="font-weight:900;">Zákazník</div>
+        <div class="small" style="margin-top:4px;">{{ bike.customer.full_name }} | {{ bike.customer.email }}</div>
+      </div>
+      <a class="btn btn-dark" href="{% url 'customer_profile' %}">Môj profil</a>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:14px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Servis</th>
+          <th>Vada</th>
+          <th>Status</th>
+          <th>Cena</th>
+          <th>Vytvorené</th>
+          <th>Akcia</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td style="font-weight:900;">
+              {% if o.service_code %}#{{ o.service_code }}{% else %}#{{ o.id }}{% endif %}
+            </td>
+
+            <td style="color:#374151;">
+              {{ o.issue_description|default:"" }}
+            </td>
+
+            <td>
+              {% if o.status == "hotova" %}
+                <span class="chip chip-green">{{ o.get_status_display }}</span>
+              {% elif o.status == "prebieha" %}
+                <span class="chip chip-blue">{{ o.get_status_display }}</span>
+              {% else %}
+                <span class="chip chip-gray">{{ o.get_status_display }}</span>
+              {% endif %}
+            </td>
+
+            <td style="font-weight:900;">{{ o.price }} €</td>
+
+            <td class="small">{{ o.created_at|date:"d.m.Y H:i" }}</td>
+
+            <td>
+              <a class="btn btn-orange" href="{% url 'customer_ticket_create' o.id %}">Napísať otázku</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="muted" style="padding:16px 10px; font-weight:900;">
+              Zatiaľ tu nie je žiadny servis.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

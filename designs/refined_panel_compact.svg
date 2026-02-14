@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#fbfdff}
+    .header{fill:#0b2545}
+    .htext{font:700 18px sans-serif;fill:#fff}
+    .card{fill:#fff;stroke:#eef2f6}
+    .k{font:700 20px sans-serif;fill:#111827}
+    .muted{font:400 12px sans-serif;fill:#6b7280}
+    .pill{fill:#fff;stroke:#e6edf3}
+  </style>
+  <rect class="bg" width="1200" height="800"/>
+  <rect class="header" x="0" y="0" width="1200" height="72"/>
+  <text x="28" y="44" class="htext">Servis panel</text>
+
+  <g transform="translate(28,96)">
+    <rect class="card" x="0" y="0" width="1144" height="96" rx="10"/>
+    <text x="20" y="36" class="k">Rýchle filtrování a vyhľadávanie</text>
+    <rect x="20" y="56" width="220" height="28" class="pill" rx="14"/>
+    <rect x="260" y="56" width="280" height="28" class="pill" rx="14"/>
+    <rect x="560" y="56" width="120" height="28" rx="14" fill="#0b2545"/>
+
+    <!-- small colorful KPI bubbles -->
+    <rect x="760" y="16" width="72" height="40" rx="10" fill="#3b82f6"/>
+    <text x="780" y="42" font-size="14" fill="#fff" font-weight="700">4</text>
+    <rect x="844" y="16" width="72" height="40" rx="10" fill="#10b981"/>
+    <text x="864" y="42" font-size="14" fill="#fff" font-weight="700">1</text>
+    <rect x="928" y="16" width="72" height="40" rx="10" fill="#ff7a59"/>
+    <text x="948" y="42" font-size="14" fill="#fff" font-weight="700">0</text>
+  </g>
+
+  <g transform="translate(28,212)">
+    <rect class="card" x="0" y="0" width="1144" height="456" rx="12"/>
+    <text x="20" y="34" class="k">Aktívne objednávky</text>
+    <text x="20" y="58" class="muted">Rýchly prehľad, inline akcie</text>
+
+    <!-- Rows compact -->
+    <g transform="translate(0,86)">
+      <rect x="16" y="0" width="1112" height="56" rx="8" fill="#fff" stroke="#f1f5f9"/>
+      <text x="32" y="36" class="muted">radko • olpran • #9 • riso nechce robit • 03.01.2026</text>
+      <rect x="1020" y="12" width="64" height="32" rx="8" fill="#0b2545"/>
+      <text x="1042" y="34" font-size="12" fill="#fff">Det</text>
+    </g>
+
+    <g transform="translate(0,154)">
+      <rect x="16" y="0" width="1112" height="56" rx="8" fill="#fff" stroke="#f1f5f9"/>
+      <text x="32" y="36" class="muted">Zuzana • sworks epic • #8 • nieco tomu je • 02.01.2026</text>
+      <rect x="1020" y="12" width="64" height="32" rx="8" fill="#0b2545"/>
+      <text x="1042" y="34" font-size="12" fill="#fff">Det</text>
+    </g>
+
+  </g>
+</svg>

@@ -1,0 +1,76 @@
+<!-- templates/create_customer_with_bike.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:980px; margin:0 auto;">
+  <div class="page-head">
+    <div>
+      <div class="title">Nový zákazník</div>
+      <p class="subtitle">Vytvoríš zákazníka, účet a hneď mu priradíš bicykel.</p>
+    </div>
+    <a class="btn btn-light" href="{% url 'service_panel' %}">Späť</a>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <div class="card-pad">
+        <div style="font-weight:900;">Zákazník</div>
+
+        <form method="post" style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+          {% csrf_token %}
+
+          <div>
+            <label class="label">Meno a priezvisko</label>
+            <input class="input" name="full_name" placeholder="Meno Priezvisko" required>
+          </div>
+
+          <div>
+            <label class="label">Email</label>
+            <input class="input" name="email" type="email" placeholder="email@example.com" required>
+          </div>
+
+          <div>
+            <label class="label">Telefón</label>
+            <input class="input" name="phone_number" placeholder="+421 ...">
+          </div>
+
+          <div style="margin-top:6px; font-weight:900;">Bicykel</div>
+
+          <div>
+            <label class="label">Značka</label>
+            <input class="input" name="brand" placeholder="Specialized, Trek, Scott" required>
+          </div>
+
+          <div>
+            <label class="label">Model</label>
+            <input class="input" name="model" placeholder="Epic, Supercaliber, Spark">
+          </div>
+
+          <div>
+            <label class="label">Sériové číslo</label>
+            <input class="input" name="serial_number" placeholder="Ak je">
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-orange" type="submit">Vytvoriť</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-pad">
+        <div style="font-weight:900;">Tip</div>
+        <p class="subtitle" style="margin-top:8px;">
+          Ak zákazník ešte nemá účet, systém mu môže poslať prihlasovacie údaje emailom. Potom vie hneď písať tickety.
+        </p>
+
+        <div style="margin-top:14px;" class="chip chip-orange">
+          Zákazník uvidí svoje servisy, stav a môže sa pýtať k poslednej zákazke.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

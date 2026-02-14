@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Nový servis</div>
+    <p class="subtitle">Vyber existujúci bicykel, alebo založ rýchlo servis pre nového zákazníka bez účtu v portáli.</p>
+  </div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'service_panel' %}">Späť</a>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; margin-bottom:8px;">Existujúci zákazník</div>
+
+      <form method="get" action="{% url 'create_service_order' %}" style="display:flex; gap:10px; flex-wrap:wrap; align-items:end;">
+        <div style="flex:1; min-width:260px;">
+          <label class="label">Zákazník</label>
+          <select class="input" name="customer_id" style="padding-right:34px;" onchange="this.form.submit()">
+            <option value="">Vyber zákazníka</option>
+            {% for c in customers %}
+              <option value="{{ c.id }}" {% if selected_customer and selected_customer.id == c.id %}selected{% endif %}>
+                {{ c.full_name|default:c.email }}{% if c.phone_number %} · {{ c.phone_number }}{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-dark" type="submit">Načítať biky</button>
+      </form>
+
+      <form method="post" style="margin-top:14px;">
+        {% csrf_token %}
+
+        <div>
+          <label class="label">Bicykel</label>
+          <select class="input" name="bike_id" style="padding-right:34px;">
+            <option value="">Vyber bicykel</option>
+            {% for b in bikes %}
+              <option value="{{ b.id }}">
+                {{ b.brand }} {{ b.model }}{% if b.serial_number %} · SN {{ b.serial_number }}{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="small" style="margin-top:8px;">Keď nevidíš žiadne biky, najprv vyber zákazníka a klikni Načítať biky.</div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label class="label">Nahlásená vada</label>
+          <textarea class="input" name="issue_description" rows="5" style="resize:vertical;" placeholder="Čo zákazník nahlásil"></textarea>
+        </div>
+
+        <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-orange" type="submit">Vytvoriť servis</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900; margin-bottom:8px;">
+        {% if edit_mode %}Editovanie údajov{% else %}Nový zákazník bez účtu{% endif %}
+      </div>
+      {% if edit_mode %}
+        <div class="small" style="margin-bottom:12px;">
+          Údaje sú predvyplnené podľa vybraného zákazníka. Môžeš ich upraviť pred vytvorením servisu.
+        </div>
+      {% else %}
+        <div class="small" style="margin-bottom:12px;">
+          Tento zákazník nebude mať login, iba vytvoríme profil, bicykel a servis. Neskôr ho vieš pozvať do portálu jedným klikom zo servisu. Pri uložení automaticky skúsime nájsť existujúci profil podľa emailu/telefónu.
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        {% if selected_customer %}
+          <input type="hidden" name="edit_customer_id" value="{{ selected_customer.id }}">
+        {% endif %}
+
+        <div class="grid" style="margin-top:0;">
+          <div>
+            <label class="label">Meno</label>
+            <input class="input" type="text" name="new_full_name" placeholder="Meno a priezvisko" value="{{ new_full_name }}">
+          </div>
+          <div>
+            <label class="label">Email</label>
+            <input class="input" type="email" name="new_email" placeholder="email" value="{{ new_email }}">
+          </div>
+          <div>
+            <label class="label">Telefón</label>
+            <input class="input" type="text" name="new_phone_number" placeholder="tel" value="{{ new_phone_number }}">
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label class="label">Značka</label>
+            <input class="input" type="text" name="new_brand" placeholder="Trek, Specialized" value="{{ new_brand }}">
+          </div>
+          <div>
+            <label class="label">Model</label>
+            <input class="input" type="text" name="new_model" placeholder="Supercaliber" value="{{ new_model }}">
+          </div>
+          <div>
+            <label class="label">Sériové číslo</label>
+            <input class="input" type="text" name="new_serial_number" placeholder="SN" value="{{ new_serial_number }}">
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label class="label">Nahlásená vada</label>
+          <textarea class="input" name="issue_description" rows="5" style="resize:vertical;" placeholder="Čo zákazník nahlásil"></textarea>
+        </div>
+
+        <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-orange" type="submit">Vytvoriť servis</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

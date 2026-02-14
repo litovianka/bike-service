@@ -1,0 +1,76 @@
+{# templates/customer_ticket_list.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Moje tickety</div>
+    <p class="subtitle">Komunikácia k servisom.</p>
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'customer_home' %}">Späť na moje biky</a>
+  </div>
+</div>
+
+<div class="table-wrap" style="margin-top:14px;">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Servis</th>
+        <th>Predmet</th>
+        <th>Stav</th>
+        <th>Aktualizované</th>
+        <th>Akcia</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tickets %}
+        <tr>
+          <td><strong>#{{ t.id }}</strong></td>
+          <td>
+            <strong>
+              {% if t.order.service_code %}#{{ t.order.service_code }}{% else %}#{{ t.order.id }}{% endif %}
+            </strong>
+            <div class="small">{{ t.order.bike.brand }} {{ t.order.bike.model }}</div>
+          </td>
+          <td>{{ t.subject|default:"Ticket" }}</td>
+          <td>
+            {% if t.status == "WAITING_CUSTOMER" %}
+              <span class="chip chip-orange">Čaká na teba</span>
+            {% elif t.status == "WAITING_ADMIN" %}
+              <span class="chip chip-blue">Čaká na servis</span>
+            {% elif t.status == "CLOSED" %}
+              <span class="chip chip-gray">Zatvorený</span>
+            {% else %}
+              <span class="chip chip-gray">Otvorený</span>
+            {% endif %}
+          </td>
+          <td class="muted">
+            {% if t.updated_at %}{{ t.updated_at|date:"d.m.Y H:i" }}{% else %}{{ t.created_at|date:"d.m.Y H:i" }}{% endif %}
+          </td>
+          <td>
+            <a class="btn btn-dark" href="{% url 'customer_ticket_detail' t.id %}">Detail</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="muted">Zatiaľ nemáš žiadne tickety.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if page_obj.paginator.num_pages > 1 %}
+  <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    {% if page_obj.has_previous %}
+      <a class="btn btn-light" href="?page={{ page_obj.previous_page_number }}">Predchádzajúca</a>
+    {% endif %}
+    <span class="small">Strana {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="btn btn-light" href="?page={{ page_obj.next_page_number }}">Ďalšia</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

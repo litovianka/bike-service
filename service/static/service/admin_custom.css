@@ -1,0 +1,51 @@
+/* service/static/service/admin_custom.css */
+
+:root{
+  --bike-dark:#111827;
+  --bike-dark2:#0b1220;
+  --bike-orange:#f97316;
+}
+
+#header{
+  background: linear-gradient(180deg, var(--bike-dark), var(--bike-dark2)) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+#header a:link,
+#header a:visited{
+  color: #ffffff !important;
+  font-weight: 800;
+}
+
+#branding h1 a{
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.module h2,
+.module caption,
+.inline-group h2{
+  background: #f9fafb !important;
+  color: #111827 !important;
+  font-weight: 900 !important;
+}
+
+a:link,
+a:visited{
+  color: var(--bike-orange) !important;
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input{
+  background: var(--bike-orange) !important;
+  border-color: var(--bike-orange) !important;
+  font-weight: 800 !important;
+}
+
+.button.default,
+input[type="submit"].default{
+  background: var(--bike-dark) !important;
+  border-color: var(--bike-dark) !important;
+}

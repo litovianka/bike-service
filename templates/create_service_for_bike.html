@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h4 mb-3">
+    Nový servis – {{ bike.customer.full_name }} · {{ bike.brand }} {{ bike.model }}
+  </h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label class="form-label">Nahlásená vada</label>
+      {{ form.description|add_class:"form-control" }}
+      {{ form.description.errors }}
+    </div>
+
+    <button class="btn btn-primary">Uložiť servis</button>
+    <a href="{% url 'service_panel' %}" class="btn btn-outline-secondary ms-2">
+      Späť na servisný panel
+    </a>
+  </form>
+</div>
+{% endblock %}

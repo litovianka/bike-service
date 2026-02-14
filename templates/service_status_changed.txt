@@ -1,0 +1,6 @@
+Ahoj {{ customer.full_name }},
+
+stav tvojej servisnej zákazky č. {{ order.id }} bol zmenený na:
+{{ order.get_status_display }}.
+
+Bike Service

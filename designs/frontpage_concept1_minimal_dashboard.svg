@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#f7f8fa}
+    .header{fill:#0b3d91}
+    .sidebar{fill:#ffffff;stroke:#e5e7eb}
+    .kpi{fill:#ffffff;stroke:#e5e7eb}
+    .card-title{font:600 16px sans-serif;fill:#111827}
+    .muted{font:400 12px sans-serif;fill:#6b7280}
+  </style>
+  <rect class="bg" x="0" y="0" width="1200" height="800"/>
+  <rect class="header" x="0" y="0" width="1200" height="72" rx="0"/>
+  <text x="28" y="44" fill="#fff" font-family="sans-serif" font-size="20">Servis - Dashboard</text>
+
+  <rect x="20" y="92" width="240" height="680" class="sidebar" rx="8"/>
+  <text x="36" y="126" class="card-title">Filtre & Shortcuts</text>
+  <text x="36" y="150" class="muted">• Search
+  \n• Nová objednávka
+  \n• Dnes</text>
+
+  <g transform="translate(280,92)">
+    <rect class="kpi" x="0" y="0" width="860" height="120" rx="8"/>
+    <text x="20" y="36" class="card-title">KPI: Open / In progress / Ready</text>
+    <text x="20" y="60" class="muted">Rýchly prehľad počtu objednávok</text>
+
+    <g transform="translate(0,140)">
+      <rect x="0" y="0" width="860" height="540" class="kpi" rx="8"/>
+      <text x="20" y="28" class="card-title">Orders list (searchable, paginated)</text>
+      <text x="20" y="50" class="muted">Tabuľka objednávok s rýchlymi akciami</text>
+      <rect x="20" y="80" width="800" height="80" fill="#fff" stroke="#e5e7eb" rx="6"/>
+      <rect x="20" y="172" width="800" height="80" fill="#fff" stroke="#e5e7eb" rx="6"/>
+      <rect x="20" y="264" width="800" height="80" fill="#fff" stroke="#e5e7eb" rx="6"/>
+      <text x="40" y="128" class="muted">(Príklad riadkov objednávok)</text>
+    </g>
+  </g>
+</svg>

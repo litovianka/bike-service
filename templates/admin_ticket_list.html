@@ -1,0 +1,114 @@
+{# templates/admin_ticket_list.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Tickety</div>
+    <p class="subtitle">Správy od zákazníkov a odpovede servisu.</p>
+  </div>
+
+  <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+    <input class="input" type="text" name="q" value="{{ q|default:'' }}" placeholder="Hľadať podľa mena, emailu, bike, SN, servisu, predmetu" style="max-width:460px;">
+    {% if active_status %}
+      <input type="hidden" name="status" value="{{ active_status }}">
+    {% endif %}
+    <button class="btn btn-dark" type="submit">Hľadať</button>
+    <a class="btn btn-light" href="{% url 'admin_ticket_list' %}">Reset</a>
+  </form>
+</div>
+
+<div class="tile-row">
+  <a class="tile orange" href="{% url 'admin_ticket_list' %}?status=WAITING_ADMIN">
+    <div class="t-title">Čaká na servis</div>
+    <div class="t-value">
+      {% if admin_ticket_badge_count %}{{ admin_ticket_badge_count }}{% else %}0{% endif %}
+    </div>
+  </a>
+
+  <a class="tile blue" href="{% url 'admin_ticket_list' %}?status=WAITING_CUSTOMER">
+    <div class="t-title">Čaká na zákazníka</div>
+    <div class="t-value"> </div>
+  </a>
+
+  <a class="tile dark" href="{% url 'admin_ticket_list' %}?status=OPEN">
+    <div class="t-title">Otvorené</div>
+    <div class="t-value"> </div>
+  </a>
+
+  <a class="tile green" href="{% url 'admin_ticket_list' %}?status=CLOSED">
+    <div class="t-title">Zatvorené</div>
+    <div class="t-value"> </div>
+  </a>
+</div>
+
+<div class="table-wrap" style="margin-top:14px;">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Zákazník</th>
+        <th>Servis</th>
+        <th>Predmet</th>
+        <th>Stav</th>
+        <th>Aktualizované</th>
+        <th>Akcia</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tickets %}
+        <tr>
+          <td><strong>#{{ t.id }}</strong></td>
+          <td>
+            <strong>{{ t.order.bike.customer.full_name|default:t.order.bike.customer.email }}</strong>
+            <div class="small">{{ t.order.bike.customer.email }}</div>
+          </td>
+          <td>
+            <strong>#{{ t.order.service_code|default:t.order.id }}</strong>
+            <div class="small">{{ t.order.bike.brand }} {{ t.order.bike.model }}{% if t.order.bike.serial_number %} · SN {{ t.order.bike.serial_number }}{% endif %}</div>
+          </td>
+          <td>{{ t.subject|default:"Bez predmetu" }}</td>
+          <td>
+            {% if t.status == "WAITING_ADMIN" %}
+              <span class="chip chip-orange">Čaká na servis</span>
+            {% elif t.status == "WAITING_CUSTOMER" %}
+              <span class="chip chip-blue">Čaká na zákazníka</span>
+            {% elif t.status == "CLOSED" %}
+              <span class="chip chip-gray">Zatvorený</span>
+            {% else %}
+              <span class="chip chip-gray">Otvorený</span>
+            {% endif %}
+          </td>
+          <td class="muted">
+            {% if t.updated_at %}
+              {{ t.updated_at|date:"d.m.Y H:i" }}
+            {% else %}
+              {{ t.created_at|date:"d.m.Y H:i" }}
+            {% endif %}
+          </td>
+          <td>
+            <a class="btn btn-dark" href="{% url 'admin_ticket_detail' t.id %}">Detail</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="muted">Žiadne tickety.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+  <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    {% if page_obj.has_previous %}
+      <a class="btn btn-light" href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if active_status %}status={{ active_status }}&{% endif %}page={{ page_obj.previous_page_number }}">Predchádzajúca</a>
+    {% endif %}
+    <span class="small">Strana {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="btn btn-light" href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if active_status %}status={{ active_status }}&{% endif %}page={{ page_obj.next_page_number }}">Ďalšia</a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}

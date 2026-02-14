@@ -1,0 +1,118 @@
+<!-- templates/ticket_admin_detail.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Ticket #{{ ticket.id }}</div>
+    <p class="subtitle">
+      Servis #{{ ticket.order.service_code|default:ticket.order_id }} · {{ ticket.order.bike.brand }} {{ ticket.order.bike.model }} · {{ ticket.customer.full_name }} ({{ ticket.customer.email }})
+    </p>
+    <div style="margin-top:10px;">
+      <span class="chip chip-gray">Stav: {{ ticket.get_status_display }}</span>
+      {% if ticket.status == "waiting_admin" %}
+        <span class="chip chip-orange" style="margin-left:8px;">Čaká na servis</span>
+      {% elif ticket.status == "waiting_customer" %}
+        <span class="chip chip-blue" style="margin-left:8px;">Čaká na zákazníka</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{% url 'admin_ticket_list' %}">Späť</a>
+    <a class="btn btn-light" href="{% url 'service_order_admin_detail' ticket.order_id %}">Servis</a>
+  </div>
+</div>
+
+{% if is_closed %}
+  <div class="card" style="margin-top:14px; border-color:#f59e0b; background:#fef3c7; box-shadow:none;">
+    <div class="card-pad" style="padding:12px;">
+      <div style="font-weight:900;">Ticket je zatvorený.</div>
+      <div style="margin-top:4px; color:#92400e;">Konverzácia je uzavretá, nové správy sa už neposielajú.</div>
+    </div>
+  </div>
+{% endif %}
+
+<div class="split">
+  <div class="card">
+    <div class="card-pad" style="border-bottom:1px solid var(--line); font-weight:900;">
+      Predmet: {{ ticket.subject|default:"Ticket" }}
+    </div>
+
+    <div class="card-pad">
+      {% for m in ticket.messages.all %}
+        {% if m.role == "admin" %}
+          <div class="bubble-row bubble-right bubble-admin">
+            <div class="bubble">
+              <div class="bubble-head">
+                <div style="font-weight:900; color:var(--blueText);">Servis</div>
+                <div class="small">{{ m.created_at|date:"d.m.Y H:i" }}</div>
+              </div>
+              <div class="bubble-body">{{ m.message }}</div>
+            </div>
+          </div>
+        {% elif m.role == "customer" %}
+          <div class="bubble-row bubble-left bubble-customer">
+            <div class="bubble">
+              <div class="bubble-head">
+                <div style="font-weight:900; color:var(--orangeText);">Zákazník</div>
+                <div class="small">{{ m.created_at|date:"d.m.Y H:i" }}</div>
+              </div>
+              <div class="bubble-body">{{ m.message }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="bubble-row bubble-left">
+            <div class="bubble">
+              <div class="bubble-head">
+                <div style="font-weight:900; color:#374151;">Systém</div>
+                <div class="small">{{ m.created_at|date:"d.m.Y H:i" }}</div>
+              </div>
+              <div class="bubble-body">{{ m.message }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% empty %}
+        <div class="muted">Zatiaľ bez správ.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div style="font-weight:900;">Akcie</div>
+
+      {% if not is_closed %}
+        <form method="post" style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+          {% csrf_token %}
+
+          <div>
+            <label class="label">Stav</label>
+            <select class="input" name="status" style="padding-right:34px;">
+              {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if ticket.status == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label class="label">Odpoveď</label>
+            <textarea class="input" name="message" rows="7" style="resize:vertical;" placeholder="Napíš odpoveď zákazníkovi"></textarea>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <button class="btn btn-dark" type="submit">Odoslať</button>
+            <button class="btn" type="submit" name="close" value="1" style="border-color:#ef4444; background:#fee2e2; font-weight:900;">
+              Zavrieť ticket
+            </button>
+          </div>
+        </form>
+      {% else %}
+        <div class="small" style="margin-top:10px;">
+          Ticket je zatvorený. Ak treba riešiť niečo nové, vytvor nový ticket k servisu.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

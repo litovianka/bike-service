@@ -1,0 +1,47 @@
+<!-- templates/ticket_customer_create.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:820px; margin:0 auto;">
+  <div class="page-head">
+    <div>
+      <div class="title">Nový ticket</div>
+      <p class="subtitle">
+        Servis {% if order.service_code %}#{{ order.service_code }}{% else %}#{{ order.id }}{% endif %}
+        | {{ order.bike.brand }} {{ order.bike.model }}
+      </p>
+    </div>
+    <a class="btn btn-light" href="{% url 'bike_detail' order.bike.id %}">Späť</a>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-pad">
+      <form method="post" style="display:flex; flex-direction:column; gap:12px;">
+        {% csrf_token %}
+
+        <div>
+          <label class="label">Predmet</label>
+          <input class="input" name="subject" placeholder="Napríklad: Otázka k cene, Termín dokončenia, Upresnenie vady">
+        </div>
+
+        <div>
+          <label class="label">Správa</label>
+          <textarea class="input" name="message" rows="7" style="resize:vertical;" placeholder="Napíš otázku alebo doplnenie"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn btn-orange" type="submit">Odoslať</button>
+        </div>
+      </form>
+
+      {% if order.issue_description %}
+        <div style="margin-top:14px; border-top:1px solid var(--line); padding-top:12px;">
+          <div style="font-weight:900; font-size:13px;">Nahlásená vada</div>
+          <div style="margin-top:6px; color:#374151; font-size:13px; white-space:pre-wrap;">{{ order.issue_description }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

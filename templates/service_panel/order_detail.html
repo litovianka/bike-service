@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detail servisu{% endblock %}
+
+{% block extra_head %}
+<style>
+  .bb-wrap{ padding:18px 16px 26px; }
+  .bb-shell{ max-width:1120px; margin:0 auto; }
+
+  .bb-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+
+  .bb-title{
+    font-size:44px;
+    line-height:1.05;
+    font-weight:900;
+    color:#111827;
+  }
+  .bb-subtitle{
+    margin-top:6px;
+    font-size:18px;
+    color:#6b7280;
+  }
+
+  .bb-pills{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .bb-pill{
+    display:inline-flex;
+    align-items:center;
+    border:1px solid #e5e7eb;
+    background:#f8fafc;
+    color:#374151;
+    border-radius:999px;
+    padding:8px 12px;
+    font-weight:800;
+    font-size:14px;
+  }
+  .bb-pill-accent{
+    background:#fff7ed;
+    border-color:#fed7aa;
+    color:#9a3412;
+  }
+
+  .bb-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .bb-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    padding:10px 16px;
+    font-weight:900;
+    text-decoration:none;
+    border:1px solid transparent;
+    cursor:pointer;
+    font-size:14px;
+    white-space:nowrap;
+  }
+  .bb-btn-dark{ background:#111827; color:#fff; }
+  .bb-btn-ghost{ background:#fff; border-color:#e5e7eb; color:#111827; }
+  .bb-btn-orange{ background:#f97316; color:#fff; }
+
+  .bb-grid{
+    display:grid;
+    grid-template-columns:360px 1fr;
+    gap:18px;
+    align-items:start;
+  }
+
+  .bb-card{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(17,24,39,.08);
+    overflow:hidden;
+    height:fit-content;
+  }
+
+  .bb-card-head{
+    padding:16px 16px;
+    font-weight:900;
+    font-size:20px;
+    color:#111827;
+    border-bottom:1px solid #e5e7eb;
+    background:#fff;
+  }
+
+  .bb-card-body{
+    padding:16px 16px;
+  }
+
+  .bb-divider{
+    height:1px;
+    background:#e5e7eb;
+    margin:14px 0;
+  }
+
+  .bb-block-title{
+    font-weight:900;
+    font-size:16px;
+    color:#111827;
+  }
+
+  .bb-block-value{
+    margin-top:8px;
+    font-weight:900;
+    font-size:26px;
+    line-height:1.1;
+    color:#111827;
+  }
+
+  .bb-muted{
+    margin-top:6px;
+    color:#6b7280;
+    font-size:16px;
+  }
+
+  .bb-id{
+    margin-top:8px;
+    font-weight:900;
+    font-size:40px;
+    line-height:1;
+    color:#111827;
+  }
+
+  .bb-form{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .bb-row{
+    display:grid;
+    grid-template-columns:1fr 260px auto;
+    gap:14px;
+    align-items:end;
+  }
+
+  .bb-field{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .bb-label{
+    font-weight:900;
+    font-size:14px;
+    color:#111827;
+  }
+
+  .bb-input,
+  .bb-textarea,
+  select,
+  input[type="text"],
+  input[type="number"],
+  textarea{
+    width:100%;
+    border:1px solid #e5e7eb;
+    background:#fff;
+    border-radius:14px;
+    padding:12px 12px;
+    font-size:16px;
+    outline:none;
+  }
+
+  .bb-textarea{
+    resize:vertical;
+    min-height:120px;
+  }
+
+  .bb-form-actions{
+    display:flex;
+    justify-content:flex-end;
+    padding-top:6px;
+  }
+
+  .bb-note{
+    margin-top:10px;
+    font-size:14px;
+    color:#6b7280;
+  }
+
+  .bb-debug{
+    display:inline-flex;
+    margin-top:10px;
+    font-size:12px;
+    font-weight:900;
+    border:1px solid #e5e7eb;
+    background:#f9fafb;
+    border-radius:999px;
+    padding:6px 10px;
+    color:#374151;
+  }
+
+  @media (max-width: 980px){
+    .bb-grid{ grid-template-columns:1fr; }
+    .bb-row{ grid-template-columns:1fr; }
+    .bb-title{ font-size:36px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bb-wrap">
+  <div class="bb-shell">
+
+    <div class="bb-top">
+      <div>
+        <div class="bb-title">Servis #{{ order.service_code|default:order.id }}</div>
+        <div class="bb-subtitle">
+          {{ order.bike.customer.full_name|default:order.bike.customer.email }} · {{ order.bike.brand }} {{ order.bike.model }} · Sériové číslo {{ order.bike.serial_number|default:"nezadané" }}
+        </div>
+
+        <div class="bb-pills">
+          <span class="bb-pill">{{ order.get_status_display|default:order.status }}</span>
+          <span class="bb-pill bb-pill-accent">Cena {{ order.price|default:"0,00" }} €</span>
+          <span class="bb-pill">Vytvorené {{ order.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+
+        <span class="bb-debug">TEMPLATE V8</span>
+      </div>
+
+      <div class="bb-actions">
+        <a class="bb-btn bb-btn-ghost" href="{% url 'service_panel' %}">Späť na servis panel</a>
+        <a class="bb-btn bb-btn-orange" href="{% url 'admin_ticket_list' %}">Tickety</a>
+      </div>
+    </div>
+
+    <div class="bb-grid">
+
+      <div class="bb-card">
+        <div class="bb-card-head">Zákazník</div>
+        <div class="bb-card-body">
+          <div class="bb-block-value">{{ order.bike.customer.full_name|default:order.bike.customer.email }}</div>
+          {% if order.bike.customer.email %}<div class="bb-muted">{{ order.bike.customer.email }}</div>{% endif %}
+          {% if order.bike.customer.phone_number %}<div class="bb-muted">{{ order.bike.customer.phone_number }}</div>{% endif %}
+
+          <div class="bb-divider"></div>
+
+          <div class="bb-block-title">Bicykel</div>
+          <div class="bb-block-value">{{ order.bike.brand }} {{ order.bike.model }}</div>
+          <div class="bb-muted">Sériové číslo {{ order.bike.serial_number|default:"nezadané" }}</div>
+
+          <div class="bb-divider"></div>
+
+          <div class="bb-block-title">Servis číslo</div>
+          <div class="bb-id">#{{ order.service_code|default:order.id }}</div>
+        </div>
+      </div>
+
+      <div class="bb-card">
+        <div class="bb-card-head">Úprava servisu</div>
+        <div class="bb-card-body">
+
+          <form method="post" class="bb-form">
+            {% csrf_token %}
+
+            <div class="bb-row">
+              <div class="bb-field">
+                <div class="bb-label">Status</div>
+                <select name="status" class="bb-input">
+                  {% for s in status_choices %}
+                    <option value="{{ s.0 }}" {% if order.status == s.0 %}selected{% endif %}>{{ s.1 }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="bb-field">
+                <div class="bb-label">Cena</div>
+                <input type="text" name="price" value="{{ order.price|default:'' }}" class="bb-input">
+              </div>
+
+              <div class="bb-field">
+                <button type="submit" class="bb-btn bb-btn-dark">Uložiť</button>
+              </div>
+            </div>
+
+            <div class="bb-field">
+              <div class="bb-label">Nahlásená vada</div>
+              <textarea name="issue_description" rows="6" class="bb-textarea">{{ order.issue_description|default:"" }}</textarea>
+            </div>
+
+            <div class="bb-field">
+              <div class="bb-label">Čo sa urobilo</div>
+              <textarea name="work_done" rows="8" class="bb-textarea" placeholder="Popíš prácu a výstup">{{ order.work_done|default:"" }}</textarea>
+            </div>
+
+            <div class="bb-form-actions">
+              <button type="submit" class="bb-btn bb-btn-dark">Uložiť zmeny</button>
+            </div>
+
+            <div class="bb-note">
+              Keď zmeníš status na Hotová, zákazník dostane email s textom z poľa Čo sa urobilo.
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+<!-- templates/moje_biky_dashboard.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <div class="title">Moje biky</div>
+      <p class="subtitle">
+        Prehľad bicyklov a posledných servisov. Najrýchlejšie je písať otázku k poslednému servisu.
+      </p>
+    </div>
+
+    <div class="card" style="min-width:260px;">
+      <div class="card-pad">
+        <div style="font-weight:900;">Prihlásený používateľ</div>
+        <div class="small" style="margin-top:4px;">{{ request.user.username }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    {% if bikes_data %}
+      {% for row in bikes_data %}
+        {% with bike=row.bike last_order=row.last_order %}
+          <div class="card">
+            <div style="padding:12px 12px 0 12px;">
+              <div style="height:140px; border-radius:14px; background:linear-gradient(135deg,#111827,#0b1220); position:relative; overflow:hidden;">
+                <div style="position:absolute; inset:0; opacity:.2; background:radial-gradient(circle at 30% 30%, rgba(249,115,22,.9), transparent 55%);"></div>
+                <div style="position:absolute; bottom:10px; left:12px; right:12px; color:white;">
+                  <div style="font-weight:900; font-size:16px;">{{ bike.brand }} {{ bike.model }}</div>
+                  <div style="opacity:.75; font-size:12px;">Sériové číslo: {{ bike.serial_number|default:"" }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-pad">
+              {% if last_order %}
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                  <div>
+                    <div style="font-weight:900;">Posledný servis</div>
+                    <div class="small" style="margin-top:6px;">
+                      Servis {% if last_order.service_code %}#{{ last_order.service_code }}{% else %}#{{ last_order.id }}{% endif %}
+                    </div>
+
+                    <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                      <span class="chip chip-gray">{{ last_order.get_status_display }}</span>
+                      <span class="chip chip-orange">Cena {{ last_order.price }} €</span>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <a class="btn btn-dark" href="{% url 'bike_detail' bike.id %}">Detail</a>
+                    <a class="btn btn-orange" href="{% url 'customer_ticket_create' last_order.id %}">Napísať otázku</a>
+                  </div>
+                </div>
+
+                {% if last_order.issue_description %}
+                  <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:12px;">
+                    <div style="font-weight:900; font-size:13px;">Nahlásená vada</div>
+                    <div style="margin-top:6px; color:#374151; font-size:13px; white-space:pre-wrap;">{{ last_order.issue_description }}</div>
+                  </div>
+                {% endif %}
+              {% else %}
+                <div class="small">Zatiaľ tu nie je žiadny servis.</div>
+                <div style="margin-top:10px;">
+                  <a class="btn btn-dark" href="{% url 'bike_detail' bike.id %}">Detail</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endwith %}
+      {% endfor %}
+    {% else %}
+      <div class="card">
+        <div class="card-pad muted" style="font-weight:800;">
+          Nemáš priradený žiadny bicykel. Ak je to chyba, napíš servisu.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

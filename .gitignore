@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtualenvs
+venv/
+.venv/
+
+# Local env and secrets
+.env
+.env.*
+!.env.example
+
+# Databases and backups
+db.sqlite3
+db.sqlite3.bak
+*.sqlite3
+backups/
+*.zip
+ZALOHA tickety
+
+# Build/static artifacts
+staticfiles/
+media/
+service_photos/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

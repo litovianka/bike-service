@@ -1,0 +1,415 @@
+<!-- templates/base.html -->
+{% load static %}
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bike Service</title>
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+
+      --dark:#111827;
+      --dark2:#0b1220;
+
+      --orange:#f97316;
+      --orange2:#fb923c;
+      --orangeBg:#fff7ed;
+      --orangeLine:#fed7aa;
+      --orangeText:#9a3412;
+
+      --blueBg:#eff6ff;
+      --blueLine:#bfdbfe;
+      --blueText:#1e3a8a;
+
+      --shadow:0 10px 25px rgba(17,24,39,.08);
+      --r12:12px;
+      --r14:14px;
+      --r16:16px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    a{ color:inherit; }
+
+    .topbar{
+      background:linear-gradient(180deg,var(--dark),var(--dark2));
+      color:white;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar-inner{
+      max-width:1120px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:900;
+      letter-spacing:.2px;
+      min-width:200px;
+    }
+
+    .brand-logo{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:140px;
+      height:28px;
+    }
+    .brand-logo img{
+      height:28px;
+      width:auto;
+      display:block;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      text-decoration:none;
+      padding:9px 11px;
+      border-radius:12px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+      font-weight:800;
+      font-size:13px;
+      color:white;
+    }
+    .nav a:hover{
+      background:rgba(255,255,255,.12);
+      border-color:rgba(255,255,255,.14);
+    }
+    .nav .cta{
+      background:rgba(249,115,22,.18);
+      border:1px solid rgba(249,115,22,.45);
+      color:white;
+    }
+    .nav .cta:hover{
+      background:rgba(249,115,22,.25);
+    }
+
+    .badge{
+      margin-left:8px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:20px;
+      padding:2px 7px;
+      font-size:12px;
+      border-radius:999px;
+      font-weight:900;
+      line-height:1.2;
+    }
+    .badge-orange{
+      background:var(--orange2);
+      color:#111827;
+    }
+    .badge-red{
+      background:#ef4444;
+      color:white;
+    }
+
+    .container{
+      max-width:1120px;
+      margin:0 auto;
+      padding:18px 16px 26px;
+    }
+
+    .flash{
+      margin-bottom:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .flash .msg{
+      padding:12px 12px;
+      border-radius:12px;
+      background:#ecfeff;
+      border:1px solid #a5f3fc;
+      color:#0f172a;
+      box-shadow:0 6px 14px rgba(15,23,42,.06);
+      font-weight:700;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+    }
+    .card-pad{ padding:16px; }
+
+    .page-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .title{
+      font-size:22px;
+      font-weight:900;
+      margin:0 0 6px 0;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
+      max-width:820px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .btn-dark{
+      background:var(--dark);
+      border-color:var(--dark);
+      color:white;
+    }
+    .btn-orange{
+      background:var(--orange);
+      border-color:var(--orange);
+      color:white;
+    }
+    .btn-light{
+      background:white;
+      border-color:var(--line);
+      color:var(--text);
+    }
+
+    .input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      outline:none;
+      background:white;
+      font-size:14px;
+    }
+    .input:focus{
+      border-color:rgba(249,115,22,.55);
+      box-shadow:0 0 0 4px rgba(249,115,22,.15);
+    }
+    .label{
+      display:block;
+      font-weight:900;
+      margin-bottom:6px;
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .tile-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+    .tile{
+      border-radius:16px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow:0 10px 20px rgba(17,24,39,.10);
+      color:white;
+      position:relative;
+      overflow:hidden;
+    }
+    .tile .t-title{
+      font-weight:900;
+      font-size:13px;
+      opacity:.95;
+    }
+    .tile .t-value{
+      margin-top:8px;
+      font-weight:900;
+      font-size:28px;
+      line-height:1;
+    }
+    .tile.orange{
+      background:linear-gradient(135deg,#f97316,#fb923c);
+    }
+    .tile.dark{
+      background:linear-gradient(135deg,#111827,#0b1220);
+    }
+    .tile.green{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+    }
+    .tile.blue{
+      background:linear-gradient(135deg,#2563eb,#60a5fa);
+    }
+
+    .table-wrap{
+      margin-top:14px;
+      overflow:hidden;
+      border-radius:16px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      background:white;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+    thead tr{
+      background:#f9fafb;
+    }
+    th,td{
+      padding:12px 10px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th{
+      font-weight:900;
+      font-size:13px;
+      color:#374151;
+    }
+    .muted{ color:var(--muted); }
+    .small{ font-size:12px; color:var(--muted); }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:12px;
+      background:white;
+      color:#111827;
+    }
+    .chip-orange{
+      background:var(--orangeBg);
+      border-color:var(--orangeLine);
+      color:var(--orangeText);
+    }
+    .chip-blue{
+      background:var(--blueBg);
+      border-color:var(--blueLine);
+      color:var(--blueText);
+    }
+    .chip-green{
+      background:#ecfdf5;
+      border-color:#a7f3d0;
+      color:#065f46;
+    }
+    .chip-gray{
+      background:#f3f4f6;
+      border-color:#e5e7eb;
+      color:#374151;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .split{ grid-template-columns:1fr; }
+      .brand-logo{ width:120px; }
+      .brand-logo img{ height:26px; }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <a class="brand-logo" href="{% url 'home_redirect' %}" aria-label="BlackBike">
+          <img src="{% static 'service/blackbike-logo.jpeg' %}" alt="blackbike" loading="lazy" decoding="async">
+        </a>
+      </div>
+
+      <div class="nav">
+        <a href="{% url 'loyalty_landing' %}" class="cta">Odmeny</a>
+
+        {% if request.user.is_authenticated %}
+          {% if request.user.is_staff %}
+            <a href="{% url 'service_panel' %}">Servis panel</a>
+
+            <a href="{% url 'admin_ticket_list' %}">
+              Tickety
+              {% if admin_ticket_badge_count %}
+                <span class="badge badge-red">{{ admin_ticket_badge_count }}</span>
+              {% endif %}
+            </a>
+          {% else %}
+            <a href="{% url 'customer_home' %}">Moje biky</a>
+
+            <a href="{% url 'customer_ticket_list' %}">
+              Moje tickety
+              {% if customer_ticket_badge_count %}
+                <span class="badge badge-orange">{{ customer_ticket_badge_count }}</span>
+              {% endif %}
+            </a>
+
+            <a href="{% url 'customer_profile' %}">Môj profil</a>
+          {% endif %}
+
+          <a href="{% url 'logout' %}">Odhlásiť</a>
+        {% else %}
+          <a href="{% url 'login' %}">Prihlásiť</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if messages %}
+      <div class="flash">
+        {% for m in messages %}
+          <div class="msg">{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

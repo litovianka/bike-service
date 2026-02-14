@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Nová servisná zákazka</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.bike.id_for_label }}">Bicykel</label>
+      {{ form.bike }}
+      {{ form.bike.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.description.id_for_label }}">Nahlásená vada</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Vytvoriť servis</button>
+    <a href="{% url 'service_panel' %}" class="btn btn-outline-secondary ms-2">Späť na servisný panel</a>
+  </form>
+</div>
+{% endblock %}

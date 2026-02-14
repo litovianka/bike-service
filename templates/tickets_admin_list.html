@@ -1,0 +1,101 @@
+<!-- templates/ticket_admin_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="title">Tickety</div>
+    <p class="subtitle">Tu vidíš požiadavky zákazníkov. Priorita sú tickety, ktoré čakajú na servis.</p>
+  </div>
+  <a class="btn btn-light" href="{% url 'service_panel' %}">Späť na servis panel</a>
+</div>
+
+<div class="card" style="margin-top:14px;">
+  <div class="card-pad">
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+      <div style="flex:1; min-width:280px;">
+        <label class="label">Hľadať</label>
+        <input class="input" type="text" name="q" value="{{ query }}" placeholder="Zákazník, email, predmet, bike...">
+        <div class="small" style="margin-top:6px;">Tip: ak chceš vidieť všetko, nastav Status na Otvorený alebo Zatvorený.</div>
+      </div>
+
+      <div style="min-width:240px;">
+        <label class="label">Status</label>
+        <select class="input" name="status" style="padding-right:34px;">
+          <option value="" {% if not status %}selected{% endif %}>Čaká na servis</option>
+          {% for s in status_choices %}
+            <option value="{{ s.0 }}" {% if status == s.0 %}selected{% endif %}>{{ s.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <button class="btn btn-dark" type="submit">Filtrovať</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="table-wrap" style="margin-top:14px;">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Zákazník</th>
+        <th>Servis</th>
+        <th>Predmet</th>
+        <th>Status</th>
+        <th>Aktualizované</th>
+        <th>Akcia</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if tickets %}
+        {% for t in tickets %}
+          <tr>
+            <td style="font-weight:900;">#{{ t.id }}</td>
+
+            <td>
+              <div style="font-weight:900;">{{ t.customer.full_name|default:t.customer.email }}</div>
+              <div class="small">{{ t.customer.email }}</div>
+            </td>
+
+            <td>
+              <div style="font-weight:900;">
+                #{{ t.order.service_code|default:t.order_id }}
+              </div>
+              <div class="small">{{ t.order.bike.brand }} {{ t.order.bike.model }}</div>
+            </td>
+
+            <td style="font-weight:900;">{{ t.subject|default:"Ticket" }}</td>
+
+            <td>
+              {% if t.status == "waiting_admin" %}
+                <span class="chip chip-orange">Čaká na servis</span>
+              {% elif t.status == "waiting_customer" %}
+                <span class="chip chip-blue">Čaká na zákazníka</span>
+              {% elif t.status == "closed" %}
+                <span class="chip chip-gray">Zatvorený</span>
+              {% else %}
+                <span class="chip chip-blue">Otvorený</span>
+              {% endif %}
+            </td>
+
+            <td class="small">{{ t.updated_at|date:"d.m.Y H:i" }}</td>
+
+            <td>
+              <a class="btn btn-dark" href="{% url 'admin_ticket_detail' t.id %}">Otvoriť</a>
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="7" class="muted" style="padding:16px 10px; font-weight:900;">
+            Žiadne tickety podľa filtra.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

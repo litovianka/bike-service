@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h4 mb-3">Pridať bicykel – {{ customer.full_name }}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label class="form-label">Značka</label>
+      {{ form.brand|add_class:"form-control" }}
+      {{ form.brand.errors }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Model</label>
+      {{ form.model|add_class:"form-control" }}
+      {{ form.model.errors }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Sériové číslo</label>
+      {{ form.serial_number|add_class:"form-control" }}
+      {{ form.serial_number.errors }}
+    </div>
+
+    <button class="btn btn-primary">Uložiť</button>
+    <a href="{% url 'customer_detail_admin' customer.id %}" class="btn btn-outline-secondary ms-2">
+      Späť na zákazníka
+    </a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Nový zákazník – Bike Service{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="page-title">Nový zákazník</h1>
+    <p class="page-subtitle">
+        Vytvor zákaznícky profil a pridaj k nemu prvý bicykel.  
+        Ďalšie bicykle vieš doplniť neskôr cez administráciu alebo vlastnú obrazovku.
+    </p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <h3 style="margin-top: 0; margin-bottom: 12px;">Zákazník</h3>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_full_name">Meno a priezvisko</label>
+            {{ form.full_name|add_class:"form-control" }}
+        </div>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_email">E-mail</label>
+            {{ form.email|add_class:"form-control" }}
+        </div>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_phone">Telefónne číslo</label>
+            {{ form.phone|add_class:"form-control" }}
+        </div>
+
+        <h3 style="margin-top: 24px; margin-bottom: 12px;">Bicykel</h3>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_bike_brand">Značka bicykla</label>
+            {{ form.bike_brand|add_class:"form-control" }}
+        </div>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_bike_model">Model bicykla</label>
+            {{ form.bike_model|add_class:"form-control" }}
+        </div>
+
+        <div class="mt-3">
+            <label class="form-label" for="id_bike_serial_number">Sériové číslo / rám</label>
+            {{ form.bike_serial_number|add_class:"form-control" }}
+        </div>
+
+        <div class="mt-4" style="display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-primary">Uložiť zákazníka</button>
+            <a href="{% url 'service_panel' %}" class="btn btn-light">Späť na servisný panel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
