@@ -205,6 +205,11 @@
     box-shadow: inset 4px 0 0 rgba(249,115,22,.45);
   }
 
+  /* Gentle row separation for long lists */
+  .table-wrap tbody tr:nth-child(even):not(.sp-row-waiting) td{
+    background:#f8fafc;
+  }
+
   .sp-inline-form{
     display:flex;
     align-items:center;
