@@ -8,6 +8,8 @@ from typing import Iterable, Tuple
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 
@@ -32,6 +34,32 @@ def _wrap_text(text: str, max_chars: int) -> list[str]:
     return lines
 
 
+def _resolve_pdf_fonts() -> tuple[str, str]:
+    regular_name = "Helvetica"
+    bold_name = "Helvetica-Bold"
+    candidates = [
+        (
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        ),
+        (
+            "/Library/Fonts/Arial Unicode.ttf",
+            "/Library/Fonts/Arial Bold.ttf",
+        ),
+    ]
+
+    for regular_path, bold_path in candidates:
+        if Path(regular_path).exists() and Path(bold_path).exists():
+            try:
+                pdfmetrics.registerFont(TTFont("PDF-Regular", regular_path))
+                pdfmetrics.registerFont(TTFont("PDF-Bold", bold_path))
+                return "PDF-Regular", "PDF-Bold"
+            except Exception:
+                continue
+
+    return regular_name, bold_name
+
+
 def build_service_protocol_pdf(
     *,
     order_code: str,
@@ -52,23 +80,29 @@ def build_service_protocol_pdf(
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
+    font_regular, font_bold = _resolve_pdf_fonts()
 
     y = height - 48
 
     # Header logo (falls back silently if image is not available).
     logo_path = Path(__file__).resolve().parent / "static" / "service" / "blackbike-logo.jpeg"
+    logo_drawn = False
     if logo_path.exists():
         try:
             logo = ImageReader(str(logo_path))
             c.drawImage(logo, 48, y - 10, width=140, height=30, mask="auto", preserveAspectRatio=True, anchor="sw")
+            logo_drawn = True
         except Exception:
             pass
+    if not logo_drawn:
+        c.setFont(font_bold, 18)
+        c.drawString(48, y - 2, "blackbike")
 
-    c.setFont("Helvetica-Bold", 18)
+    c.setFont(font_bold, 18)
     c.drawRightString(width - 48, y, "Servisný protokol")
     y -= 26
 
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     c.drawString(48, y, f"Servis: #{order_code}")
     y -= 16
     c.drawString(48, y, f"Zákazník: {customer_name}")
@@ -83,11 +117,11 @@ def build_service_protocol_pdf(
     c.drawString(48, y, f"Sériové číslo: {serial_number or 'nezadané'}")
     y -= 18
 
-    c.setFont("Helvetica-Bold", 11)
+    c.setFont(font_bold, 11)
     c.drawString(48, y, "Stav a termíny")
     y -= 14
 
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     c.drawString(48, y, f"Stav: {status_label}")
     y -= 14
     c.drawString(48, y, f"Vytvorené: {created_at_str}")
@@ -99,10 +133,10 @@ def build_service_protocol_pdf(
     c.drawString(48, y, f"Cena: {price_str}")
     y -= 18
 
-    c.setFont("Helvetica-Bold", 11)
+    c.setFont(font_bold, 11)
     c.drawString(48, y, "Nahlásená vada")
     y -= 14
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     for line in _wrap_text(issue_description, 95)[:8]:
         c.drawString(48, y, line)
         y -= 13
@@ -111,10 +145,10 @@ def build_service_protocol_pdf(
         y -= 13
     y -= 10
 
-    c.setFont("Helvetica-Bold", 11)
+    c.setFont(font_bold, 11)
     c.drawString(48, y, "Čo sa urobilo")
     y -= 14
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     for line in _wrap_text(work_done, 95)[:10]:
         c.drawString(48, y, line)
         y -= 13
@@ -123,10 +157,10 @@ def build_service_protocol_pdf(
         y -= 13
     y -= 10
 
-    c.setFont("Helvetica-Bold", 11)
+    c.setFont(font_bold, 11)
     c.drawString(48, y, "Checklist")
     y -= 14
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     for label, done in checklist_items:
         mark = "OK" if done else "neoznačené"
         c.drawString(48, y, f"{label}: {mark}")
@@ -134,14 +168,14 @@ def build_service_protocol_pdf(
         if y < 90:
             c.showPage()
             y = height - 48
-            c.setFont("Helvetica", 11)
+            c.setFont(font_regular, 11)
 
     y -= 18
     if y < 120:
         c.showPage()
         y = height - 48
 
-    c.setFont("Helvetica", 11)
+    c.setFont(font_regular, 11)
     c.drawString(48, y, "Ďakujeme, že ste navštívili náš servis BlackBike.")
     y -= 16
     c.drawString(48, y, "Tešíme sa na vašu ďalšiu návštevu.")
