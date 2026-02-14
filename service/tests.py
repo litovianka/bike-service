@@ -62,6 +62,20 @@ class PasswordSecurityTests(TestCase):
         self.assertTrue(user.has_usable_password())
         self.assertIsNotNone(authenticate(username="token@example.com", password="StrongPass123!"))
 
+    def test_login_view_allows_email_identifier(self):
+        User.objects.create_user(
+            username="radko",
+            email="radko@example.com",
+            password="StrongPass123!",
+            is_staff=True,
+        )
+        response = self.client.post(
+            reverse("login"),
+            {"username": "radko@example.com", "password": "StrongPass123!"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("service_panel"))
+
 
 class ServicePanelKpiTests(TestCase):
     def setUp(self):

@@ -39,6 +39,11 @@ def login_view(request):
         password = (request.POST.get("password", "") or "").strip()
 
         user = authenticate(request, username=username, password=password)
+        # Allow login via email as well (useful for staff users with non-email usernames).
+        if user is None and "@" in username:
+            email_match = User.objects.filter(email__iexact=username).only("username").first()
+            if email_match:
+                user = authenticate(request, username=email_match.username, password=password)
         if user is not None:
             reset_rate_limit(scope="login", ident=ip)
             login(request, user)
