@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import random
 from decimal import Decimal
 
 from django.conf import settings
@@ -79,6 +80,18 @@ class ServiceOrder(models.Model):
     def __str__(self) -> str:
         code = self.service_code or str(self.pk)
         return f"Servis #{code}"
+
+    def save(self, *args, **kwargs):
+        if not self.service_code:
+            rng = random.SystemRandom()
+            for _ in range(50):
+                candidate = str(rng.randint(1000, 9999))
+                if not ServiceOrder.objects.filter(service_code=candidate).exists():
+                    self.service_code = candidate
+                    break
+            if not self.service_code:
+                self.service_code = str(rng.randint(1000, 9999))
+        super().save(*args, **kwargs)
 
 
 class ServiceOrderPhoto(models.Model):

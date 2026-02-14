@@ -195,3 +195,25 @@ class CreateServiceOrderDedupTests(TestCase):
         profile.refresh_from_db()
         self.assertEqual(profile.phone_number, "0900123456")
         self.assertEqual(ServiceOrder.objects.count(), 1)
+
+    def test_new_service_order_gets_random_4_digit_service_code(self):
+        profile = CustomerProfile.objects.create(
+            full_name="Kod Test",
+            email="kod@example.com",
+            phone_number="0900000000",
+        )
+        bike = Bike.objects.create(
+            customer=profile,
+            brand="Brand",
+            model="Model",
+            serial_number="SN-KOD",
+        )
+
+        order = ServiceOrder.objects.create(
+            bike=bike,
+            issue_description="Test",
+            status=ServiceOrder.Status.NEW,
+        )
+
+        self.assertTrue(order.service_code.isdigit())
+        self.assertEqual(len(order.service_code), 4)
