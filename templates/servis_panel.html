@@ -241,6 +241,14 @@
     text-overflow:ellipsis;
   }
 
+  .sp-customer-name{
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:220px;
+  }
+
   .sp-issue{
     display:-webkit-box;
     -webkit-line-clamp:2;
@@ -421,7 +429,7 @@
         {% for o in orders %}
           <tr class="{% if o.id in waiting_ticket_order_ids %}sp-row-waiting{% endif %}">
             <td>
-              <div style="font-weight:900;">{{ o.bike.customer.full_name|default:o.bike.customer.email }}</div>
+              <div class="sp-customer-name" title="{{ o.bike.customer.full_name|default:o.bike.customer.email }}">{{ o.bike.customer.full_name|default:o.bike.customer.email }}</div>
               <div class="small">{{ o.bike.customer.email }}</div>
               {% if o.bike.customer.phone_number %}<div class="small">{{ o.bike.customer.phone_number }}</div>{% endif %}
 
