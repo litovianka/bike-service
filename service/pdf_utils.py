@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from io import BytesIO
+from pathlib import Path
 from typing import Iterable, Tuple
 
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
 
@@ -55,9 +55,18 @@ def build_service_protocol_pdf(
 
     y = height - 48
 
+    # Header logo (falls back silently if image is not available).
+    logo_path = Path(__file__).resolve().parent / "static" / "service" / "blackbike-logo.jpeg"
+    if logo_path.exists():
+        try:
+            logo = ImageReader(str(logo_path))
+            c.drawImage(logo, 48, y - 10, width=140, height=30, mask="auto", preserveAspectRatio=True, anchor="sw")
+        except Exception:
+            pass
+
     c.setFont("Helvetica-Bold", 18)
-    c.drawString(48, y, "Servis protokol")
-    y -= 22
+    c.drawRightString(width - 48, y, "Servisný protokol")
+    y -= 26
 
     c.setFont("Helvetica", 11)
     c.drawString(48, y, f"Servis: #{order_code}")
@@ -79,7 +88,7 @@ def build_service_protocol_pdf(
     y -= 14
 
     c.setFont("Helvetica", 11)
-    c.drawString(48, y, f"Status: {status_label}")
+    c.drawString(48, y, f"Stav: {status_label}")
     y -= 14
     c.drawString(48, y, f"Vytvorené: {created_at_str}")
     y -= 14
@@ -133,11 +142,9 @@ def build_service_protocol_pdf(
         y = height - 48
 
     c.setFont("Helvetica", 11)
-    c.drawString(48, y, "Podpis servis:")
-    c.line(140, y - 2, 320, y - 2)
-    y -= 24
-    c.drawString(48, y, "Podpis zákazník:")
-    c.line(160, y - 2, 340, y - 2)
+    c.drawString(48, y, "Ďakujeme, že ste navštívili náš servis BlackBike.")
+    y -= 16
+    c.drawString(48, y, "Tešíme sa na vašu ďalšiu návštevu.")
 
     c.showPage()
     c.save()
